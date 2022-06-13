@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
-import { getContactDetails } from "../APIManager"
+import { deleteContact, getContactDetails } from "../APIManager"
 import { useNavigate } from "react-router-dom"
 
 
@@ -29,7 +29,7 @@ export const ContactDetails = () => {
             <div>{contact?.phone ? `Phone: ${contact?.phone}` : ""}</div>
             <div>{contact?.socials ? `Socials: ${contact?.socials}` : ""}</div>
             <div>{contact?.birthday ? `Birthday: ${contact?.birthday}` : ""}</div>
-            <div>Notes: {contact?.notes} </div>
+            <div>{contact?.notes ? `Notes: ${contact?.notes}` : ""}</div>
             {/* Add category listout */}
 
             <button 
@@ -39,6 +39,15 @@ export const ContactDetails = () => {
                 }}
             className="btn btn-primary">
                 Edit contact
+            </button>
+            <button 
+                onClick={() => {
+                    deleteContact(contactId)
+                    .then(response => response.json())
+                    .then(navigate(`/contacts`))
+                }}
+            className="btn btn-primary">
+                DELETE contact
             </button>
         </section>
 }

@@ -6,8 +6,6 @@ import "./Contacts.css"
 export const ContactList = ({searchTermState}) => {
     const [contacts, setContacts] = useState([])
     const [filteredContacts, setFilteredContacts] = useState([])
-    // const [highPrice, setHighPrice] = useState(false)
-    // const [openOnly, updateOpenOnly] = useState(false)
     const navigate = useNavigate()
 
 
@@ -21,7 +19,7 @@ export const ContactList = ({searchTermState}) => {
                     setContacts(contactArray)
                 }) 
         },
-        [] // When this array is empty, you are observing initial component state
+        [] 
     )
     
     useEffect(

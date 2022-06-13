@@ -38,3 +38,24 @@ export const newContact = (contactObject) => {
                                 })
                                     .then(response => response.json())
 }
+
+export const deleteContact = (contactId) => {
+    return fetch(`http://localhost:8088/contacts/${contactId}`, {
+                method: "DELETE"
+            })
+}
+
+export const getUserCategories = (userId) => {
+    return fetch(`http://localhost:8088/userCategories?userId=${userId}`)
+    .then(response => response.json())
+}
+
+export const addCategory = (category) => {
+    return fetch(`http://localhost:8088/userCategories`, {
+                                    method: "POST",
+                                    headers: {"Content-Type": "application/json"},
+                                    body: JSON.stringify(category)
+                        
+                                })
+                                    .then(response => response.json())
+}

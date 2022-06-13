@@ -1,0 +1,15 @@
+.categories {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.category {
+    background-color: azure;
+    border: 1px dotted darkmagenta;
+    padding: .7rem;
+    margin: .5rem 0;
+    padding: 0.5 rem;
+    margin: 0.5 rem;
+}
