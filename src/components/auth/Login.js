@@ -17,10 +17,12 @@ export const Login = () => {
                     const user = foundUsers[0]
                     localStorage.setItem("connect_user", JSON.stringify({
                         id: user.id,
-                        staff: user.isStaff
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        email: user.email,
                     }))
 
-                    navigate("/")
+                    navigate("/contacts")
                 }
                 else {
                     window.alert("Invalid login")

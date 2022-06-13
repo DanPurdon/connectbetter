@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { getContacts } from "../APIManager"
+import { Link, useNavigate } from "react-router-dom"
+import { getUserContacts } from "../APIManager"
 import "./Contacts.css"
 
 export const ContactList = ({searchTermState}) => {
@@ -11,11 +11,12 @@ export const ContactList = ({searchTermState}) => {
     const navigate = useNavigate()
 
 
-    
+    const localConnectUser = localStorage.getItem("connect_user")
+    const connectUserObject = JSON.parse(localConnectUser)
 
     useEffect(
         () => {
-            getContacts()
+            getUserContacts(connectUserObject.id)
                 .then((contactArray) => {
                     setContacts(contactArray)
                 }) 
@@ -33,7 +34,7 @@ export const ContactList = ({searchTermState}) => {
     useEffect(
         () => {
             const searchedContacts = contacts.filter(contact => {
-                return contact.name.toLowerCase().startsWith(searchTermState.toLowerCase())
+                return contact.firstName.toLowerCase().startsWith(searchTermState.toLowerCase())
             })
             setFilteredContacts(searchedContacts)
         },
@@ -43,7 +44,7 @@ export const ContactList = ({searchTermState}) => {
 
     return <>
 
-        <button onClick={() => navigate("/contact/create")}>Create Contact</button>
+        <button onClick={() => navigate("/contacts/create")}>Create Contact</button>
             
 
         <h2>List of Contacts</h2>
@@ -53,11 +54,11 @@ export const ContactList = ({searchTermState}) => {
                 filteredContacts.map(
                     (contact) => {
                         return <section className="contact" key={`contact--${contact.id}`}>
-                            <header>Name: {contact.name}</header>
-                            <div>{contact.name ? `Name: ${contact.name}` : ""}</div>
+                            <div><Link to={`/contacts/${contact.id}`}>{contact.firstName} {contact.lastName ? `${contact.lastName}` : ""}</Link></div>
                             <div>{contact.metAt ? `Met at: ${contact.metAt}` : ""}</div>
-                            <div>{contact.birthday ? `Birthday: ${contact.birthday}` : ""}</div>
-                            <footer>Notes: {contact.notes} </footer>
+                            <div>{contact.email ? `Email: ${contact.email}` : ""}</div>
+                            <div>{contact.phone ? `Phone: ${contact.phone}` : ""}</div>
+                           
                         </section>
                     }
                 )

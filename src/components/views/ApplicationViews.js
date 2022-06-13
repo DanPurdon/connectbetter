@@ -13,16 +13,15 @@ export const ApplicationViews = () => {
                 <>
                     <h1>ConnectBetter</h1>
                     <h2>Your Memory Extender</h2>
-                    <ContactContainer />
                     <Outlet />
                 </>
             }>
 
-                {/* <Route path="categories" element={ <CategoryList /> } /> */}
+                <Route path="categories" element={ <CategoryList /> } />
                 <Route path="contacts" element={ <ContactContainer /> } />
-				{/* <Route path="contact/create" element={ <ContactForm /> } />
-				<Route path="contact/create" element={ <ContactEdit /> } />
-                <Route path="contacts/:contactId" element={<ContactDetails/>} /> */}
+				<Route path="contacts/create" element={ <ContactForm /> } />
+				<Route path="contacts/:contactId/edit" element={ <ContactEdit /> } />
+                <Route path="contacts/:contactId" element={<ContactDetails/>} />
             </Route>
         </Routes>
     )
