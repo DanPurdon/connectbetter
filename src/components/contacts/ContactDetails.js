@@ -43,7 +43,7 @@ export const ContactDetails = () => {
             <button 
                 onClick={() => {
                     deleteContact(contactId)
-                    .then(response => response.json())
+                    .then(window.alert("Contact Deleted"))
                     .then(navigate(`/contacts`))
                 }}
             className="btn btn-primary">

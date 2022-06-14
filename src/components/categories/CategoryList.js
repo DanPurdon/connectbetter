@@ -87,7 +87,7 @@ export const CategoryList = () => {
                                         }}
                                         >Edit</button>
                                     <button onClick={() => {
-                                        deleteCategory(category.id)
+                                        deleteCategory(category)
                                         .then(loadUserCategories)
                                         }}
                                     >Delete</button>

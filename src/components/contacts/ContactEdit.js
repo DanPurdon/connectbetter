@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { getContact, editContact } from "../APIManager"
+import { getContact, editContact, getUserCategories, getContactCategoriesByContact } from "../APIManager"
 
 
 export const ContactEdit = () => {
     const { contactId } = useParams()
     const [contact, updateContact] = useState()
+    const [categories, setCategories] = useState([])
+    const [chosenCategories, setChosenCategories] = useState([])
 
     const navigate = useNavigate()
+    const localConnectUser = localStorage.getItem("connect_user")
+    const connectUserObject = JSON.parse(localConnectUser)
 
     useEffect(
         () => {
@@ -17,6 +21,34 @@ export const ContactEdit = () => {
                 })
         },
         [contactId]
+    )
+
+    useEffect(
+        () => {
+            getContactCategoriesByContact(contactId)
+            .then(contactCategories => {
+                const copy = new Set(chosenCategories)
+                contactCategories.map(category => {
+                        copy.add(category.userCategoryId)
+                    })
+                    setChosenCategories(copy)
+            })
+        },
+        [] 
+    )
+
+    const loadUserCategories = () => {
+        getUserCategories(connectUserObject.id)
+                .then((categoryArray) => {
+                    setCategories(categoryArray)
+                }) 
+    }
+
+    useEffect(
+        () => {
+            loadUserCategories()
+        },
+        [] 
     )
 
     const handleSaveButtonClick = (event) => {
@@ -175,33 +207,39 @@ export const ContactEdit = () => {
                         } />
                 </div>
             </fieldset>
-            {/* Add categories here
-                <fieldset>
+            <fieldset>
                 <div className="form-group">
                 {
-                locations.map(
-                    (location) => {
+                categories.map(
+                    (category) => {
                         return <>
-                        <input 
-                        type="radio" 
-                        name="contactLocation" 
-                        id={location.address} 
-                        value={location.id}
+                        <input key={`category--${category.id}`}
+                        
+                        checked = {chosenCategories?.has(category.id) ? true : false} 
                         onChange={
                             (evt) => {
-                                const copy = {...contact}
-                                copy.locationId = parseInt(evt.target.value)
-                                updateContact(copy)
+                                const copy = new Set(chosenCategories)
+                                const id = evt.target.id
+                                if (evt.target.checked) {
+                                    copy.add(parseInt(id))
+                                } else {
+                                    copy.delete(parseInt(id))
+                                }
+                                setChosenCategories(copy)
                             }
                         }
+                        type="checkbox" 
+                        name="category" 
+                        id={category.id}
+                        
                         />
-                        <label htmlFor={location.address}>{location.address}</label>
+                        {category.name}
                         </>
                     }
                 )
             }    
                 </div>
-            </fieldset> */}
+            </fieldset>
             <button
                 onClick={(clickEvent) => {
                     handleSaveButtonClick(clickEvent)

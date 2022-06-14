@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { newContact } from "../APIManager"
+import { getUserCategories, addContact } from "../APIManager"
 
 
 export const ContactForm = () => {
     const localConnectUser = localStorage.getItem("connect_user")
     const connectUserObject = JSON.parse(localConnectUser)
     const navigate = useNavigate()
-    
+    const [categories, setCategories] = useState([])
+    const [chosenCategories, setChosenCategories] = useState([])
     const [contact, updateContact] = useState({
         userId: connectUserObject.id,
         firstName: "",
@@ -22,13 +23,25 @@ export const ContactForm = () => {
     })
 
 
+    const loadUserCategories = () => {
+        getUserCategories(connectUserObject.id)
+                .then((categoryArray) => {
+                    setCategories(categoryArray)
+                }) 
+    }
+
+    useEffect(
+        () => {
+            loadUserCategories()
+        },
+        [] 
+    )
+
     const handleSaveButtonClick = (event) => {
         event.preventDefault()
 
-        newContact(contact)
-            .then((contact) => {
-                navigate(`/contacts/${contact.id}`)
-            })
+        addContact(contact, chosenCategories)
+        .then(() => navigate(`/contacts`))
     }
 
     return <>
@@ -178,33 +191,37 @@ export const ContactForm = () => {
                         } />
                 </div>
             </fieldset>
-            {/* Add categories here
-                <fieldset>
+            <fieldset>
                 <div className="form-group">
                 {
-                locations.map(
-                    (location) => {
+                categories.map(
+                    (category) => {
                         return <>
-                        <input 
-                        type="radio" 
-                        name="contactLocation" 
-                        id={location.address} 
-                        value={location.id}
+                        <input key={`category--${category.id}`} 
                         onChange={
                             (evt) => {
-                                const copy = {...contact}
-                                copy.locationId = parseInt(evt.target.value)
-                                updateContact(copy)
+                                const copy = new Set(chosenCategories)
+                                const id = evt.target.id
+                                if (evt.target.checked) {
+                                    copy.add(parseInt(id))
+                                } else {
+                                    copy.delete(parseInt(id))
+                                }
+                                setChosenCategories(copy)
                             }
                         }
+                        type="checkbox" 
+                        name="category" 
+                        id={category.id}
+                        
                         />
-                        <label htmlFor={location.address}>{location.address}</label>
+                        {category.name}
                         </>
                     }
                 )
             }    
                 </div>
-            </fieldset> */}
+            </fieldset>
             <button
                 onClick={(clickEvent) => {
                     handleSaveButtonClick(clickEvent)
