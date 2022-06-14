@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { addCategory, getUserCategories } from "../APIManager"
+import { addCategory, deleteCategory, editCategory, getUserCategories } from "../APIManager"
 import "./Categories.css"
 
 export const CategoryList = () => {
@@ -11,6 +11,12 @@ export const CategoryList = () => {
         userId: connectUserObject.id,
         name: ""
     })
+    const [editing, setEditing] = useState({
+        editing: false,
+        categoryId: null,
+        name: ""
+    })
+
     const navigate = useNavigate()
 
     const loadUserCategories = () => {
@@ -27,11 +33,12 @@ export const CategoryList = () => {
         [] 
     )
    
-    const setter = (property, value) => {
+    const categorySetter = (property, value) => {
         const copy = { ...newCategory }
         copy[property] = value
         setNewCategory(copy)
     }
+  
 
     return <>
 
@@ -43,10 +50,50 @@ export const CategoryList = () => {
             {
                 categories.map(
                     (category) => {
-                        return <section className="category" key={`category--${category.id}`}>
-                            <div>{category?.name}</div>
-
-                        </section>
+                        if (editing.categoryId === category.id) {
+                            return <section className="category" key={`category--${category.id}`}>
+                                <div className="form-group">
+                                    <input
+                                        required autoFocus
+                                        type="text"
+                                        className="form-control"
+                                        placeholder={editing?.name}
+                                        value={editing?.name}
+                                        onChange={
+                                            (evt) => {
+                                                const copy = { ...editing }
+                                                copy.name = evt.target.value
+                                                setEditing(copy)
+                                            }
+                                        } />
+                                    <button onClick={() => {
+                                        editCategory({
+                                            userId: category.userId,
+                                            name: editing.name,
+                                            id: category.id
+                                        })
+                                        .then(setEditing({editing: false, categoryId: null, name: ""}))
+                                        .then(loadUserCategories)
+                                        }}
+                                        >Save</button>
+                                </div>
+                                </section> 
+                        } else {
+                            return <section className="category" key={`category--${category.id}`}>
+                                <div>{category?.name}
+                                    <button onClick={() => {
+                                        setEditing({editing: true, categoryId: category.id, name: category.name})
+                                        loadUserCategories()
+                                        }}
+                                        >Edit</button>
+                                    <button onClick={() => {
+                                        deleteCategory(category.id)
+                                        .then(loadUserCategories)
+                                        }}
+                                    >Delete</button>
+                                </div>
+                            </section>
+                        }
                     }
                     )
                 }    
@@ -62,14 +109,14 @@ export const CategoryList = () => {
                     value={newCategory?.name}
                     onChange={
                         (evt) => {
-                            setter("name", evt.target.value)
+                            categorySetter("name", evt.target.value)
                         }
                     } />
             </div>
         <button 
                 onClick={() => {
                     addCategory(newCategory)
-                    .then(setter("name", ""))
+                    .then(categorySetter("name", ""))
                     .then(loadUserCategories)
                 }}
             className="btn btn-primary">

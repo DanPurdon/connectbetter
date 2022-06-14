@@ -59,3 +59,20 @@ export const addCategory = (category) => {
                                 })
                                     .then(response => response.json())
 }
+
+export const deleteCategory = (categoryId) => {
+    return fetch(`http://localhost:8088/userCategories/${categoryId}`, {
+                method: "DELETE"
+            })
+}
+
+export const editCategory = (categoryObject) => {
+    return fetch(`http://localhost:8088/userCategories/${categoryObject.id}`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(categoryObject)
+                    })
+                        .then(response => response.json())
+}
