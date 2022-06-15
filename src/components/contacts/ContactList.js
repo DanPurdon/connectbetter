@@ -7,20 +7,13 @@ export const ContactList = ({searchTermState}) => {
     const [contacts, setContacts] = useState([])
     const [filteredContacts, setFilteredContacts] = useState([])
     const navigate = useNavigate()
+    const [sortOption, setSort] = useState({
+        sort: ""
+    })
 
 
     const localConnectUser = localStorage.getItem("connect_user")
     const connectUserObject = JSON.parse(localConnectUser)
-
-    useEffect(
-        () => {
-            getUserContacts(connectUserObject.id)
-                .then((contactArray) => {
-                    setContacts(contactArray)
-                }) 
-        },
-        [] 
-    )
     
     useEffect(
         () => {
@@ -28,6 +21,32 @@ export const ContactList = ({searchTermState}) => {
         },
         [contacts]
     )
+
+    useEffect(
+        () => {
+            getUserContacts(connectUserObject.id)
+                .then((contactArray) => {
+                    setContacts(contactArray)
+                    setFilteredContacts(contactArray)
+                }) 
+        },
+        [] 
+    )
+       
+    useEffect(
+        () => {
+            const parameter = sortOption
+            const sortedContacts = contacts.sort((a,b) => (a[parameter] > b[parameter]) ? 1 : ((b[parameter] > a[parameter]) ? -1 : 0))
+            setFilteredContacts(sortedContacts)
+        },
+        [sortOption]
+    )
+
+    // const handleSort = () => {
+    //     const parameter = sortOption
+    //     const sortedContacts = contacts.sort((a,b) => (a[parameter] > b[parameter]) ? 1 : ((b[parameter] > a[parameter]) ? -1 : 0))
+    //     setFilteredContacts(sortedContacts)
+    // }
 
     useEffect(
         () => {
@@ -42,14 +61,32 @@ export const ContactList = ({searchTermState}) => {
 
     return <>
 
-        <button onClick={() => navigate("/contacts/create")}>Create Contact</button>
-            
-
         <h2>List of Contacts</h2>
+        <div id="createContactButton">
+        <button onClick={() => navigate("/contacts/create")}>Create New Contact</button>
+        </div>
+
+        <div className="sortDropdown">
+        <label>
+            Sort by:
+            <select value={sortOption} onChange={(event) => {
+                setSort(event.target.value)
+                // handleSort()
+                }}>
+                <option value="dateCreated">Date Added</option>
+                <option value="firstName">First Name</option>
+                <option value="lastName">Last Name</option>
+                <option value="birthday">Birthday</option>
+                {/* Add category logic later */}
+                {/* <option value="category">Category</option> */}
+                <option value="metAt">Met At</option>
+            </select>
+        </label>
+        </div>
 
         <article className="contacts">
             {
-                filteredContacts.map(
+                filteredContacts?.map(
                     (contact) => {
                         return <section className="contact" key={`contact--${contact.id}`}>
                             <div><Link to={`/contacts/${contact.id}`}>{contact.firstName} {contact.lastName ? `${contact.lastName}` : ""}</Link></div>

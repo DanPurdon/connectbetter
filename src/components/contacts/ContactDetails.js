@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
-import { deleteContact, getContactDetails } from "../APIManager"
+import { deleteContact, getContactDetails, getUserCategories } from "../APIManager"
 import { useNavigate } from "react-router-dom"
 
 
 export const ContactDetails = () => {
     const {contactId} = useParams()
     const [contact, updateContact] = useState()
+    const [categories, updateCategories] = useState()
 
+    const localConnectUser = localStorage.getItem("connect_user")
+    const connectUserObject = JSON.parse(localConnectUser)
 
     useEffect(
         () => {
@@ -15,13 +18,28 @@ export const ContactDetails = () => {
                 .then((data) => {
                     const singleContact = data[0]
                     updateContact(singleContact)
-                }) 
+                })
         },
         [contactId]
     )
 
+    useEffect(
+        () => {
+            getUserCategories(connectUserObject.id)
+                .then((data) => {
+                    updateCategories(data)
+                }) 
+        },
+        []
+    )
+
     const navigate = useNavigate()
     
+    const getCategoryName = (userCategoryId) => {
+        const categoryMatch = categories?.filter(userCategory => userCategory?.id === userCategoryId)
+        return categoryMatch?.length > 0 ? categoryMatch[0].name : ""
+    }
+
     return <section className="contact">
             <header>{contact?.firstName} {contact?.lastName ? `${contact?.lastName}` : ""}</header>
             <div>{contact?.metAt ? `Met at: ${contact?.metAt}` : ""}</div>
@@ -30,7 +48,9 @@ export const ContactDetails = () => {
             <div>{contact?.socials ? `Socials: ${contact?.socials}` : ""}</div>
             <div>{contact?.birthday ? `Birthday: ${contact?.birthday}` : ""}</div>
             <div>{contact?.notes ? `Notes: ${contact?.notes}` : ""}</div>
-            {/* Add category listout */}
+            {contact?.contactCategories?.map(contactCategory => {
+                <div>{getCategoryName(contactCategory.userCategoryId)}</div>
+            })}
 
             <button 
                 onClick={() => {

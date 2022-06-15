@@ -10,7 +10,7 @@ export const getContact = (contactId) => {
 }
 
 export const getUserContacts = (userId) => {
-    return fetch(`http://localhost:8088/contacts?userId=${userId}`)
+    return fetch(`http://localhost:8088/contacts?_embed=contactCategories&userId=${userId}`)
         .then(response => response.json())
 }
 
@@ -112,6 +112,11 @@ export const deleteContact = (contactId) => {
 
 export const getUserCategories = (userId) => {
     return fetch(`http://localhost:8088/userCategories?userId=${userId}`)
+        .then(response => response.json())
+}
+
+export const getUserCategoryById = (userCategoryId) => {
+    return fetch(`http://localhost:8088/userCategories?id=${userCategoryId}`)
         .then(response => response.json())
 }
 
