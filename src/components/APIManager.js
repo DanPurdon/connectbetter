@@ -15,11 +15,11 @@ export const getUserContacts = (userId) => {
 }
 
 export const getContactDetails = (contactId) => {
-    return fetch(`http://localhost:8088/contacts?_expand=user&id=${contactId}`)
+    return fetch(`http://localhost:8088/contacts?_embed=contactCategories&_expand=user&id=${contactId}`)
         .then(response => response.json())
 }
 
-export const editContact = (contactObject) => {
+export const editContact = (contactObject, categoryNumberSet) => {
     return fetch(`http://localhost:8088/contacts/${contactObject.id}`, {
         method: "PUT",
         headers: {
@@ -28,6 +28,41 @@ export const editContact = (contactObject) => {
         body: JSON.stringify(contactObject)
     })
         .then(response => response.json())
+        .then(editedContact => {
+            // Get selected category numbers from newly edited contact
+            const userCategoryNumberArray = Array.from(categoryNumberSet)
+
+            // Get access to preexisting categories on the contact
+            getContactDetails(contactObject.id)
+            .then(matchedContactArray => {
+                const preexistingCategoriesArray = matchedContactArray[0].contactCategories
+
+                // compare-- any new additions must be posted. Any unselected options must be deleted.
+                for (const categoryNumber of userCategoryNumberArray) {
+                    if (preexistingCategoriesArray?.filter(categoryObject => categoryObject.userCategoryId === categoryNumber).length === 0) {
+                        fetch(`http://localhost:8088/contactCategories`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                contactId: editedContact.id,
+                                userCategoryId: categoryNumber
+                            })
+                        })
+                            .then(response => response.json())
+                    }
+                }
+                
+                for (const categoryObject of preexistingCategoriesArray) {
+                    if (userCategoryNumberArray?.filter(categoryNumber => categoryObject.userCategoryId === categoryNumber).length === 0) {
+                        fetch(`http://localhost:8088/contactCategories/${categoryObject.id}`, {
+                            method: "DELETE"
+                        })
+                            .then(response => response.json())
+                    }
+                }
+            })    
+
+        })
 }
 
 export const addContact = (contactObject, categoryNumberSet) => {
@@ -52,26 +87,26 @@ export const addContact = (contactObject, categoryNumberSet) => {
 
                 })
                     .then(response => response.json())
-                }
-            })
-        }
+            }
+        })
+}
 
 export const deleteContact = (contactId) => {
     return fetch(`http://localhost:8088/contacts/${contactId}`, {
         method: "DELETE"
     })
-    .then(response => response.json())
-    .then(() => {
-        const contactCategories = getContactCategoriesByContact(contactId)
-        if (contactCategories.length > 0) {
-            for (const contactCategory of contactCategories) {
-                return fetch(`http://localhost:8088/contactCategories/${contactCategory.id}`, {
-                    method: "DELETE"
-                })
-                    .then(response => response.json())
+        .then(response => response.json())
+        .then(() => {
+            const contactCategories = getContactCategoriesByContact(contactId)
+            if (contactCategories.length > 0) {
+                for (const contactCategory of contactCategories) {
+                    return fetch(`http://localhost:8088/contactCategories/${contactCategory.id}`, {
+                        method: "DELETE"
+                    })
+                        .then(response => response.json())
                 }
-        }
-    })
+            }
+        })
 
 }
 
@@ -106,18 +141,18 @@ export const deleteCategory = (categoryObject) => {
     return fetch(`http://localhost:8088/userCategories/${categoryObject.id}`, {
         method: "DELETE"
     })
-    .then(() => {
-        const associatedContactCategories = getContactCategoriesByUserCategory(categoryObject.userCategoryId)
-        if (associatedContactCategories.length > 0) {
-            for (const contactCategory of associatedContactCategories) {
-                fetch(`http://localhost:8088/contactCategories/${contactCategory.id}`, {
-                    method: "DELETE"
-                })
+        .then(() => {
+            const associatedContactCategories = getContactCategoriesByUserCategory(categoryObject.userCategoryId)
+            if (associatedContactCategories.length > 0) {
+                for (const contactCategory of associatedContactCategories) {
+                    fetch(`http://localhost:8088/contactCategories/${contactCategory.id}`, {
+                        method: "DELETE"
+                    })
                 }
-        }
-    })
+            }
+        })
 }
-    
+
 
 
 export const editCategory = (categoryObject) => {

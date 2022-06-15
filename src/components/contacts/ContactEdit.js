@@ -54,11 +54,21 @@ export const ContactEdit = () => {
     const handleSaveButtonClick = (event) => {
         event.preventDefault()
 
-        editContact(contact)
+        editContact(contact, chosenCategories)
             .then(() => {
                 navigate(`/contacts/${contact.id}`)
             })
     }
+
+    const handleCheckboxes = (category) => {
+        if (chosenCategories.has(category.id)) {
+           return true
+        } else {
+            return false
+        } 
+    }
+    
+
 
     return <>
         <form className="contactForm">
@@ -215,7 +225,7 @@ export const ContactEdit = () => {
                         return <>
                         <input key={`category--${category.id}`}
                         
-                        checked = {chosenCategories?.has(category.id) ? true : false} 
+                        checked = {handleCheckboxes(category)}
                         onChange={
                             (evt) => {
                                 const copy = new Set(chosenCategories)
