@@ -11,16 +11,9 @@ export const ContactList = ({searchTermState}) => {
         sort: ""
     })
 
-
     const localConnectUser = localStorage.getItem("connect_user")
     const connectUserObject = JSON.parse(localConnectUser)
-    
-    useEffect(
-        () => {
-            setFilteredContacts(contacts)
-        },
-        [contacts]
-    )
+    let sortType = ""
 
     useEffect(
         () => {
@@ -32,21 +25,16 @@ export const ContactList = ({searchTermState}) => {
         },
         [] 
     )
-       
+    
     useEffect(
         () => {
+            const contactsCopy = contacts.map(contact => ({...contact}))
             const parameter = sortOption
-            const sortedContacts = contacts.sort((a,b) => (a[parameter] > b[parameter]) ? 1 : ((b[parameter] > a[parameter]) ? -1 : 0))
+            const sortedContacts = contactsCopy.sort((a,b) => (a[parameter] > b[parameter]) ? 1 : ((b[parameter] > a[parameter]) ? -1 : 0))
             setFilteredContacts(sortedContacts)
         },
         [sortOption]
     )
-
-    // const handleSort = () => {
-    //     const parameter = sortOption
-    //     const sortedContacts = contacts.sort((a,b) => (a[parameter] > b[parameter]) ? 1 : ((b[parameter] > a[parameter]) ? -1 : 0))
-    //     setFilteredContacts(sortedContacts)
-    // }
 
     useEffect(
         () => {
@@ -71,7 +59,6 @@ export const ContactList = ({searchTermState}) => {
             Sort by:
             <select value={sortOption} onChange={(event) => {
                 setSort(event.target.value)
-                // handleSort()
                 }}>
                 <option value="dateCreated">Date Added</option>
                 <option value="firstName">First Name</option>

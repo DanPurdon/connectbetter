@@ -10,6 +10,20 @@
     border: 1px dotted darkmagenta;
     padding: .7rem;
     margin: .5rem 0;
-    padding: 0.5 rem;
-    margin: 0.5 rem;
+}
+
+.categoriesOutputContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.categoryOutput {
+    /* padding: 0 .3rem .3rem 0 ; */
+    padding: .2rem .6rem;
+    border: 1px solid;
+    box-shadow: 3px 3px #595959;
+    border-radius: 10px;
+    margin: .25rem 1rem .5rem 0;
+    background-color: honeydew;
 }

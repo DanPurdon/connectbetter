@@ -2,17 +2,24 @@ import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { getContact, editContact, getUserCategories, getContactCategoriesByContact } from "../APIManager"
 
-
 export const ContactEdit = () => {
     const { contactId } = useParams()
     const [contact, updateContact] = useState()
     const [categories, setCategories] = useState([])
     const [chosenCategories, setChosenCategories] = useState([])
+    const [feedback, setFeedback] = useState("")
 
     const navigate = useNavigate()
     const localConnectUser = localStorage.getItem("connect_user")
     const connectUserObject = JSON.parse(localConnectUser)
-
+    
+    useEffect(() => {
+        if (feedback !== "") {
+            // Clear feedback to make entire element disappear after 3 seconds
+            setTimeout(() => setFeedback(""), 3000);
+        }
+    }, [feedback])
+    
     useEffect(
         () => {
             getContact(contactId)
@@ -56,7 +63,8 @@ export const ContactEdit = () => {
 
         editContact(contact, chosenCategories)
             .then(() => {
-                navigate(`/contacts/${contact.id}`)
+                setFeedback("Employee profile successfully saved")
+                setTimeout(() => navigate(`/contacts/${contact.id}`), 100)
             })
     }
 
@@ -71,6 +79,7 @@ export const ContactEdit = () => {
 
 
     return <>
+        
         <form className="contactForm">
             <h2 className="contactForm__title">Edit Contact</h2>
             <fieldset>
@@ -248,7 +257,10 @@ export const ContactEdit = () => {
                     }
                 )
             }    
-                </div>
+            </div>
+            <div className={`${feedback.includes("Error") ? "error" : "feedback"} ${feedback === "" ? "invisible" : "visible"}`}>
+                {feedback}
+            </div>
             </fieldset>
             <button
                 onClick={(clickEvent) => {

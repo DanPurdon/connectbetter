@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom"
 export const ContactDetails = () => {
     const {contactId} = useParams()
     const [contact, updateContact] = useState()
-    const [categories, updateCategories] = useState()
+    const [allCategories, updateCategories] = useState()
 
     const localConnectUser = localStorage.getItem("connect_user")
     const connectUserObject = JSON.parse(localConnectUser)
@@ -34,11 +34,6 @@ export const ContactDetails = () => {
     )
 
     const navigate = useNavigate()
-    
-    const getCategoryName = (userCategoryId) => {
-        const categoryMatch = categories?.filter(userCategory => userCategory?.id === userCategoryId)
-        return categoryMatch?.length > 0 ? categoryMatch[0].name : ""
-    }
 
     return <section className="contact">
             <header>{contact?.firstName} {contact?.lastName ? `${contact?.lastName}` : ""}</header>
@@ -48,9 +43,11 @@ export const ContactDetails = () => {
             <div>{contact?.socials ? `Socials: ${contact?.socials}` : ""}</div>
             <div>{contact?.birthday ? `Birthday: ${contact?.birthday}` : ""}</div>
             <div>{contact?.notes ? `Notes: ${contact?.notes}` : ""}</div>
+            <div className="categoriesOutputContainer">
             {contact?.contactCategories?.map(contactCategory => {
-                <div>{getCategoryName(contactCategory.userCategoryId)}</div>
+                return <div className="categoryOutput">{allCategories?.find(category => category?.id === contactCategory?.userCategoryId).name}</div>
             })}
+            </div>
 
             <button 
                 onClick={() => {
