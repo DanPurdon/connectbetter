@@ -16,6 +16,9 @@ export const NavBar = () => {
             <li className="navbar__item active">
                 <Link className="navbar__link" to="/categories">Categories</Link>
             </li>
+            <li className="navbar__item active">
+                <Link className="navbar__link" to="/customFields">Custom Fields</Link>
+            </li>
             <li className="navbar__item navbar__logout">
                 <Link className="navbar__link" to="/" onClick={() => {
                     localStorage.removeItem("connect_user")

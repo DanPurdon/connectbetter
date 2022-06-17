@@ -1,0 +1,25 @@
+.customFields {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.customField {
+    background-color: azure;
+    border: 1px dotted darkmagenta;
+    padding: .7rem;
+    margin: .5rem 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.fieldDescriptions {
+    padding: .2rem;
+    margin: .2rem 0;
+}
+
+.fieldButtons {
+    padding: .2rem;
+    margin: .2rem 0;
+}

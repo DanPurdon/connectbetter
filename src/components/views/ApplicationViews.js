@@ -4,6 +4,7 @@ import { ContactContainer } from "../contacts/ContactContainer"
 import { ContactForm } from "../contacts/ContactForm"
 import { ContactEdit } from "../contacts/ContactEdit"
 import { ContactDetails } from "../contacts/ContactDetails"
+import { CustomFieldList } from "../fields/CustomFieldList"
 
 
 export const ApplicationViews = () => {
@@ -22,6 +23,7 @@ export const ApplicationViews = () => {
 				<Route path="contacts/create" element={ <ContactForm /> } />
 				<Route path="contacts/:contactId/edit" element={ <ContactEdit /> } />
                 <Route path="contacts/:contactId" element={<ContactDetails/>} />
+                <Route path="customFields" element={ <CustomFieldList /> } />
             </Route>
         </Routes>
     )

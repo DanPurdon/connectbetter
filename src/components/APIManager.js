@@ -158,8 +158,6 @@ export const deleteCategory = (categoryObject) => {
         })
 }
 
-
-
 export const editCategory = (categoryObject) => {
     return fetch(`http://localhost:8088/userCategories/${categoryObject.id}`, {
         method: "PUT",
@@ -167,6 +165,41 @@ export const editCategory = (categoryObject) => {
             "Content-Type": "application/json"
         },
         body: JSON.stringify(categoryObject)
+    })
+        .then(response => response.json())
+}
+
+
+export const getUserCustomFields = (userId) => {
+    return fetch(`http://localhost:8088/userCustomFields?_expand=user&userId=${userId}`)
+        .then(response => response.json())
+}
+
+export const addCustomField = (customFieldObject) => {
+    return fetch(`http://localhost:8088/userCustomFields`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(customFieldObject)
+
+    })
+        .then(response => response.json())
+}
+
+
+
+export const deleteCustomField = (customFieldObject) => {
+    return fetch(`http://localhost:8088/userCustomFields/${customFieldObject.id}`, {
+        method: "DELETE"
+    })
+}
+
+export const editCustomField = (customFieldObject) => {
+    return fetch(`http://localhost:8088/userCustomFields/${customFieldObject.id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(customFieldObject)
     })
         .then(response => response.json())
 }
