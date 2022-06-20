@@ -138,6 +138,24 @@ export const ContactEdit = () => {
             </fieldset>
             <fieldset>
                 <div className="form-group">
+                    <label htmlFor="contactCity">City:</label>
+                    <input
+                        required autoFocus
+                        type="text"
+                        className="form-control"
+                        placeholder={contact?.city}
+                        value={contact?.city}
+                        onChange={
+                            (evt) => {
+                                const copy = { ...contact }
+                                copy.city = evt.target.value
+                                updateContact(copy)
+                            }
+                        } />
+                </div>
+            </fieldset>
+            <fieldset>
+                <div className="form-group">
                     <label htmlFor="contactEmail">Contact email:</label>
                     <input
                         required autoFocus

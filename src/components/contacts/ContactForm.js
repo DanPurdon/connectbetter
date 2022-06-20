@@ -14,6 +14,7 @@ export const ContactForm = () => {
         firstName: "",
         lastName: "",
         metAt: "",
+        city: "",
         email: "",
         phone: "",
         socials: "",
@@ -96,6 +97,24 @@ export const ContactForm = () => {
                             (evt) => {
                                 const copy = { ...contact }
                                 copy.metAt = evt.target.value
+                                updateContact(copy)
+                            }
+                        } />
+                </div>
+            </fieldset>
+            <fieldset>
+                <div className="form-group">
+                    <label htmlFor="contactCity">City:</label>
+                    <input
+                        required autoFocus
+                        type="text"
+                        className="form-control"
+                        placeholder="City"
+                        value={contact?.city}
+                        onChange={
+                            (evt) => {
+                                const copy = { ...contact }
+                                copy.city = evt.target.value
                                 updateContact(copy)
                             }
                         } />

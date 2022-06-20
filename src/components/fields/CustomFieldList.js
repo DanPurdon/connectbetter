@@ -10,7 +10,7 @@ export const CustomFieldList = () => {
     const [newCustomField, setNewCustomField] = useState({
         userId: connectUserObject.id,
         name: "",
-        type:""
+        type:"Text"
     })
     const [editing, setEditing] = useState({
         editing: false,
@@ -125,6 +125,7 @@ export const CustomFieldList = () => {
                     Field Type:
                     <select value={typeOption} onChange={(event) => {
                         setType(event.target.value)
+                        customFieldSetter("type", event.target.value)
                         }}>
                         <option value="Text">Text</option>
                         <option value="Date">Date</option>
@@ -136,9 +137,7 @@ export const CustomFieldList = () => {
         <button 
                 onClick={() => {
                     addCustomField(newCustomField)
-                    .then(customFieldSetter("name", ""))
-                    .then(customFieldSetter("type", ""))
-                    .then(loadUserCustomFields)
+                    .then(setTimeout(loadUserCustomFields), 100)
                 }}
             className="btn btn-primary">
                 Save Custom Field
@@ -147,3 +146,9 @@ export const CustomFieldList = () => {
 
         </>
 }
+
+// Must export access to custom fields via API manager
+// On create, must make all custom fields available as editable input
+// On edit, must be able to edit info in all custom fields for the user --- what if the user has deleted the field?? It won't delete all previous info with that field.
+// OR it will, so must provide a warning-- warning deleting this field will delete this field data for ALL contacts! 
+// On details, must list all custom fields and associated information

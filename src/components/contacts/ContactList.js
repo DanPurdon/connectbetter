@@ -29,7 +29,8 @@ export const ContactList = ({searchTermState}) => {
         () => {
             const contactsCopy = contacts.map(contact => ({...contact}))
             const parameter = sortOption
-            const sortedContacts = contactsCopy.sort((a,b) => (a[parameter] > b[parameter]) ? 1 : ((b[parameter] > a[parameter]) ? -1 : 0))
+            const filteredForMatches = contactsCopy.filter(contact => contact[parameter] !== "")
+            const sortedContacts = filteredForMatches.sort((a,b) => (a[parameter] > b[parameter]) ? 1 : ((b[parameter] > a[parameter]) ? -1 : 0))
             setFilteredContacts(sortedContacts)
         },
         [sortOption]
@@ -63,9 +64,8 @@ export const ContactList = ({searchTermState}) => {
                 <option value="firstName">First Name</option>
                 <option value="lastName">Last Name</option>
                 <option value="birthday">Birthday</option>
-                {/* Add category logic later */}
-                {/* <option value="category">Category</option> */}
                 <option value="metAt">Met At</option>
+                <option value="city">City</option>
             </select>
         </label>
         </div>
@@ -79,6 +79,8 @@ export const ContactList = ({searchTermState}) => {
                             <div>{contact.metAt ? `Met at: ${contact.metAt}` : ""}</div>
                             <div>{contact.email ? `Email: ${contact.email}` : ""}</div>
                             <div>{contact.phone ? `Phone: ${contact.phone}` : ""}</div>
+                            <div>{sortOption === "birthday" ? `Birthday: ${contact.birthday}` : ""}</div>
+                            <div>{sortOption === "city" ? `City: ${contact.city}` : ""}</div>
                            
                         </section>
                     }
