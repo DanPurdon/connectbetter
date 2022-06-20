@@ -13,7 +13,7 @@ export const ContactList = ({searchTermState}) => {
 
     const localConnectUser = localStorage.getItem("connect_user")
     const connectUserObject = JSON.parse(localConnectUser)
-
+    
     useEffect(
         () => {
             getUserContacts(connectUserObject.id)

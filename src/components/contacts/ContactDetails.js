@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
-import { deleteContact, getContactDetails, getUserCategories } from "../APIManager"
+import { deleteContact, getContactDetails, getCustomFieldsByContact, getUserCategories } from "../APIManager"
 import { useNavigate } from "react-router-dom"
 
 
@@ -8,6 +8,7 @@ export const ContactDetails = () => {
     const {contactId} = useParams()
     const [contact, updateContact] = useState()
     const [allCategories, updateCategories] = useState()
+    const [customFields, updateCustomFields] = useState()
 
     const localConnectUser = localStorage.getItem("connect_user")
     const connectUserObject = JSON.parse(localConnectUser)
@@ -33,6 +34,16 @@ export const ContactDetails = () => {
         []
     )
 
+    useEffect(
+        () => {
+            getCustomFieldsByContact(contactId)
+                .then((data) => {
+                    updateCustomFields(data)
+                }) 
+        },
+        []
+    )
+
     const navigate = useNavigate()
 
     return <section className="contact">
@@ -44,6 +55,9 @@ export const ContactDetails = () => {
             <div>{contact?.socials ? `Socials: ${contact?.socials}` : ""}</div>
             <div>{contact?.birthday ? `Birthday: ${contact?.birthday}` : ""}</div>
             <div>{contact?.notes ? `Notes: ${contact?.notes}` : ""}</div>
+            {customFields?.map(field => {
+                return <div>{field?.userCustomField?.name}: {field.content}</div>
+            })}
             <div className="categoriesOutputContainer">
             {contact?.contactCategories?.map(contactCategory => {
                 return <div className="categoryOutput">{allCategories?.find(category => category?.id === contactCategory?.userCategoryId).name}</div>

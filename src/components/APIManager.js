@@ -175,6 +175,11 @@ export const getUserCustomFields = (userId) => {
         .then(response => response.json())
 }
 
+export const getCustomFieldsByContact = (contactId) => {
+    return fetch(`http://localhost:8088/customFieldContent?_expand=userCustomField&contactId=${contactId}`)
+        .then(response => response.json())
+}
+
 export const addCustomField = (customFieldObject) => {
     return fetch(`http://localhost:8088/userCustomFields`, {
         method: "POST",

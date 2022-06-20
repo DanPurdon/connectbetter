@@ -79,7 +79,7 @@ export const CustomFieldList = () => {
                                             id: customField.id
                                         })
                                         .then(setEditing({editing: false, customFieldId: null, name: "", type: ""}))
-                                        .then(loadUserCustomFields)
+                                        .then(setTimeout(loadUserCustomFields), 100)
                                         }}
                                         >Save</button>
                                 </div>
@@ -129,8 +129,7 @@ export const CustomFieldList = () => {
                         }}>
                         <option value="Text">Text</option>
                         <option value="Date">Date</option>
-                        <option value="Number">Number</option>
-                        <option value="Boolean">Boolean (True/False)</option>
+                        {/*Later feature? <option value="Boolean">Boolean (True/False)</option> */}
                     </select>
                 </label>
             </div>
