@@ -38,6 +38,7 @@ export const ContactDetails = () => {
     return <section className="contact">
             <header>{contact?.firstName} {contact?.lastName ? `${contact?.lastName}` : ""}</header>
             <div>{contact?.metAt ? `Met at: ${contact?.metAt}` : ""}</div>
+            <div>{contact?.city ? `City: ${contact?.city}` : ""}</div>
             <div>{contact?.email ? `Email: ${contact?.email}` : ""}</div>
             <div>{contact?.phone ? `Phone: ${contact?.phone}` : ""}</div>
             <div>{contact?.socials ? `Socials: ${contact?.socials}` : ""}</div>
