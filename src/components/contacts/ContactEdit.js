@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { getContact, editContact, getUserCategories, getContactCategoriesByContact } from "../APIManager"
+import { getContact, editContact, getUserCategories, getContactCategoriesByContact, getUserCustomFields, getONLYCustomFieldsByContact } from "../APIManager"
 
 export const ContactEdit = () => {
     const { contactId } = useParams()
     const [contact, updateContact] = useState()
     const [categories, setCategories] = useState([])
     const [chosenCategories, setChosenCategories] = useState([])
+    const [userFields, setUserFields] = useState([])
+    const [userFieldContents, setUserFieldContents] = useState([])
+
     const [feedback, setFeedback] = useState("")
 
     const navigate = useNavigate()
@@ -28,6 +31,22 @@ export const ContactEdit = () => {
                 })
         },
         [contactId]
+    )
+
+    useEffect(
+        () => {
+            getUserCustomFields(connectUserObject.id)
+            .then(data => setUserFields(data.map(obj => ({...obj, content: ""}))))
+        },
+        [] 
+    )
+
+    useEffect(
+        () => {
+            getONLYCustomFieldsByContact(contactId)
+            .then(data => setUserFieldContents(data))
+        },
+        [] 
     )
 
     useEffect(
@@ -61,7 +80,7 @@ export const ContactEdit = () => {
     const handleSaveButtonClick = (event) => {
         event.preventDefault()
 
-        editContact(contact, chosenCategories)
+        editContact(contact, chosenCategories, userFieldContents)
             .then(() => {
                 setFeedback("Employee profile successfully saved")
                 setTimeout(() => navigate(`/contacts/${contact.id}`), 100)
@@ -226,6 +245,50 @@ export const ContactEdit = () => {
                         } />
                 </div>
             </fieldset>
+            {/* Needs to have current customfields for this contact, populate fields with them IF they exist. A check on every field then for a match.
+            If no match, show blank field like contact add. If it exists, let the value be that thing. In API, will need to have a check if it preexisted. 
+            Do a post OR a put, depending*/}
+           
+           {
+                userFields?.map(
+                    (userField) => {
+                        const preexistingMatch = userFieldContents.find(field => field?.userCustomFieldId === userField.id)
+                        return <>
+                        <fieldset>
+                            <div className="form-group">
+                                <label htmlFor={userField.name}>{userField.name}:</label>
+                                <input key={`userField--${userField.id}`} 
+                                type={userField.type.toLowerCase()} 
+                                required autoFocus
+                                className="form-control"
+                                placeholder={userField.name}
+                                value={preexistingMatch ? preexistingMatch.content : ""}
+                                onChange={
+                                    (evt) => {
+                                        let copy = userFieldContents.map(field => ({...field}))
+                                        const match = copy.filter(field => userField.id===parseInt(field.userCustomFieldId))
+                                        if (match.length > 0) {
+                                            const index = copy.indexOf(match[0])
+                                            copy[index].content = evt.target.value
+                                            setUserFieldContents(copy)
+                                        } else {
+                                            let newUserFieldContent = {
+                                                userCustomFieldId: parseInt(`${userField.id}`),
+                                                content: evt.target.value,
+                                                contactId: contactId
+                                            }
+                                            copy.push(newUserFieldContent)
+                                            setUserFieldContents(copy)
+                                        }
+                                    }
+                                } />
+                            </div>
+                        </fieldset>
+                        </>
+                    }
+                    )
+                }    
+
             <fieldset>
                 <div className="form-group">
                     <label htmlFor="contactNotes">Notes:</label>

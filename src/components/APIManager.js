@@ -19,7 +19,7 @@ export const getContactDetails = (contactId) => {
         .then(response => response.json())
 }
 
-export const editContact = (contactObject, categoryNumberSet) => {
+export const editContact = (contactObject, categoryNumberSet, fieldContentArray) => {
     return fetch(`http://localhost:8088/contacts/${contactObject.id}`, {
         method: "PUT",
         headers: {
@@ -60,12 +60,46 @@ export const editContact = (contactObject, categoryNumberSet) => {
                             .then(response => response.json())
                     }
                 }
-            })    
+            })
+            
+            // Edit or post new field content
+            .then(() => {
+                for (const fieldContent of fieldContentArray) {
+                    if (fieldContent.id) {
+                        // Put UNLESS content has been cleared ("")-- in that case DELETE
+                        if (fieldContent.content === "") {
+                            // delete custom field content entry
+                            fetch(`http://localhost:8088/customFieldContent/${fieldContent.id}`, {
+                                method: "DELETE"
+                            })
+                        } else {
+                            // PUT updated content
+                            fetch(`http://localhost:8088/customFieldContent/${fieldContent.id}`, {
+                                method: "PUT",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify(fieldContent)
+                            })
+                            .then(response => response.json())
+                        }
+                    } else {
+                        // Post
+                        fetch(`http://localhost:8088/customFieldContent`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(fieldContent)
+
+                })
+                    .then(response => response.json())
+                    }
+                }
+            })
 
         })
 }
 
-export const addContact = (contactObject, categoryNumberSet) => {
+export const addContact = (contactObject, categoryNumberSet, customFields) => {
     return fetch(`http://localhost:8088/contacts`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -84,6 +118,18 @@ export const addContact = (contactObject, categoryNumberSet) => {
                         contactId: newContact.id,
                         userCategoryId: categoryNumber
                     })
+
+                })
+                    .then(response => response.json())
+            }
+            // Adding the contact ID to each object in customFields
+            const customFieldsWithContactId = customFields.map(obj => ({...obj, contactId: newContact.id}))
+            const filterForBlanks = customFieldsWithContactId.filter(field => field.content !== "")
+            for (const customField of filterForBlanks) {
+                fetch(`http://localhost:8088/customFieldContent`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(customField)
 
                 })
                     .then(response => response.json())
@@ -175,6 +221,26 @@ export const getUserCustomFields = (userId) => {
         .then(response => response.json())
 }
 
+export const getUserCustomFieldsWithContent = (userId) => {
+    return fetch(`http://localhost:8088/userCustomFields?_expand=user&_embed=customFieldContent&userId=${userId}`)
+        .then(response => response.json())
+}
+
+export const getAllFieldContentByUserCustomFieldId = (userCustomFieldId) => {
+    return fetch(`http://localhost:8088/customFieldContent?userCustomFieldId=${userCustomFieldId}`)
+        .then(response => response.json())
+}
+
+export const getCustomFieldsByContact = (contactId) => {
+    return fetch(`http://localhost:8088/customFieldContent?_expand=userCustomField&contactId=${contactId}`)
+        .then(response => response.json())
+}
+
+export const getONLYCustomFieldsByContact = (contactId) => {
+    return fetch(`http://localhost:8088/customFieldContent?contactId=${contactId}`)
+        .then(response => response.json())
+}
+
 export const addCustomField = (customFieldObject) => {
     return fetch(`http://localhost:8088/userCustomFields`, {
         method: "POST",
@@ -188,8 +254,19 @@ export const addCustomField = (customFieldObject) => {
 
 
 export const deleteCustomField = (customFieldObject) => {
+    const allContent = getAllFieldContentByUserCustomFieldId(customFieldObject.id)
     return fetch(`http://localhost:8088/userCustomFields/${customFieldObject.id}`, {
         method: "DELETE"
+    })
+    // logic to delete ALL associated content
+    .then (() => {
+        if (allContent.length > 0) {
+            for (const content of allContent) {
+                fetch(`http://localhost:8088/customFieldContent/${content.id}`, {
+                    method: "DELETE"
+                })
+            }
+        }
     })
 }
 

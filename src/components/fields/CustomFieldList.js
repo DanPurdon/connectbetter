@@ -44,6 +44,13 @@ export const CustomFieldList = () => {
         setNewCustomField(copy)
     }
   
+    const confirmDelete = (customField) => {
+        let check = window.confirm("This will delete ALL content associated with this custom field! Proceed?")
+        if (check) {  
+        deleteCustomField(customField)
+            .then(loadUserCustomFields)
+        } 
+    }
 
     return <>
 
@@ -79,7 +86,7 @@ export const CustomFieldList = () => {
                                             id: customField.id
                                         })
                                         .then(setEditing({editing: false, customFieldId: null, name: "", type: ""}))
-                                        .then(loadUserCustomFields)
+                                        .then(setTimeout(loadUserCustomFields), 100)
                                         }}
                                         >Save</button>
                                 </div>
@@ -94,8 +101,9 @@ export const CustomFieldList = () => {
                                         }}
                                         >Edit</button>
                                     <button onClick={() => {
-                                        deleteCustomField(customField)
-                                        .then(loadUserCustomFields)
+                                        confirmDelete(customField)
+                                        // deleteCustomField(customField)
+                                        // .then(loadUserCustomFields)
                                         }}
                                     >Delete</button>
                                 </div>
@@ -129,8 +137,7 @@ export const CustomFieldList = () => {
                         }}>
                         <option value="Text">Text</option>
                         <option value="Date">Date</option>
-                        <option value="Number">Number</option>
-                        <option value="Boolean">Boolean (True/False)</option>
+                        {/*Later feature? <option value="Boolean">Boolean (True/False)</option> */}
                     </select>
                 </label>
             </div>

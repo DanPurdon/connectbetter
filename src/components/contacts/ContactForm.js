@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { getUserCategories, addContact } from "../APIManager"
+import { getUserCategories, addContact, getUserCustomFields } from "../APIManager"
 
 
 export const ContactForm = () => {
@@ -8,6 +8,8 @@ export const ContactForm = () => {
     const connectUserObject = JSON.parse(localConnectUser)
     const navigate = useNavigate()
     const [categories, setCategories] = useState([])
+    const [userFields, setUserFields] = useState([])
+    const [userFieldContents, setUserFieldContents] = useState([])
     const [chosenCategories, setChosenCategories] = useState([])
     const [contact, updateContact] = useState({
         userId: connectUserObject.id,
@@ -38,10 +40,18 @@ export const ContactForm = () => {
         [] 
     )
 
+    useEffect(
+        () => {
+            getUserCustomFields(connectUserObject.id)
+            .then(data => setUserFields(data.map(obj => ({...obj, content: ""}))))
+        },
+        [] 
+    )
+
     const handleSaveButtonClick = (event) => {
         event.preventDefault()
 
-        addContact(contact, chosenCategories)
+        addContact(contact, chosenCategories, userFieldContents)
         .then(() => navigate(`/contacts`))
     }
 
@@ -192,6 +202,43 @@ export const ContactForm = () => {
                         } />
                 </div>
             </fieldset>
+                {
+                userFields?.map(
+                    (userField) => {
+                        return <>
+                        <fieldset>
+                            <div className="form-group">
+                                <label htmlFor={userField.name}>{userField.name}:</label>
+                                <input key={`userField--${userField.id}`} 
+                                type={userField.type.toLowerCase()} 
+                                required autoFocus
+                                className="form-control"
+                                placeholder={userField.name}
+                                // value={userField.content}
+                                onChange={
+                                    (evt) => {
+                                        let copy = userFieldContents.map(field => ({...field}))
+                                        const match = copy.filter(field => userField.id===parseInt(field.userCustomFieldId))
+                                        if (match.length > 0) {
+                                            const index = copy.indexOf(match[0])
+                                            copy[index].content = evt.target.value
+                                            setUserFieldContents(copy)
+                                        } else {
+                                            let newUserFieldContent = {
+                                                userCustomFieldId: parseInt(`${userField.id}`),
+                                                content: evt.target.value
+                                            }
+                                            copy.push(newUserFieldContent)
+                                            setUserFieldContents(copy)
+                                        }
+                                    }
+                                } />
+                            </div>
+                        </fieldset>
+                        </>
+                    }
+                    )
+                }    
             <fieldset>
                 <div className="form-group">
                     <label htmlFor="contactNotes">Notes:</label>
