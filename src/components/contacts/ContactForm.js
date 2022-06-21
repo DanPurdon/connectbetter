@@ -9,7 +9,7 @@ export const ContactForm = () => {
     const navigate = useNavigate()
     const [categories, setCategories] = useState([])
     const [userFields, setUserFields] = useState([])
-    const [populatedFields, setPopulatedFields] = useState([])
+    const [userFieldContents, setUserFieldContents] = useState([])
     const [chosenCategories, setChosenCategories] = useState([])
     const [contact, updateContact] = useState({
         userId: connectUserObject.id,
@@ -51,7 +51,7 @@ export const ContactForm = () => {
     const handleSaveButtonClick = (event) => {
         event.preventDefault()
 
-        addContact(contact, chosenCategories)
+        addContact(contact, chosenCategories, userFieldContents)
         .then(() => navigate(`/contacts`))
     }
 
@@ -217,30 +217,28 @@ export const ContactForm = () => {
                                 // value={userField.content}
                                 onChange={
                                     (evt) => {
-                                        // debugger
-                                        let copy = populatedFields.map(field => ({...field}))
+                                        let copy = userFieldContents.map(field => ({...field}))
                                         const match = copy.filter(field => userField.id===parseInt(field.userCustomFieldId))
                                         if (match.length > 0) {
                                             const index = copy.indexOf(match[0])
                                             copy[index].content = evt.target.value
-                                            setPopulatedFields(copy)
+                                            setUserFieldContents(copy)
                                         } else {
-                                            let newPopulatedField = {
-                                                userCustomFieldId: `${userField.id}`,
+                                            let newUserFieldContent = {
+                                                userCustomFieldId: parseInt(`${userField.id}`),
                                                 content: evt.target.value
                                             }
-                                            copy.push(newPopulatedField)
-                                            setPopulatedFields(copy)
+                                            copy.push(newUserFieldContent)
+                                            setUserFieldContents(copy)
                                         }
-
                                     }
                                 } />
                             </div>
                         </fieldset>
                         </>
                     }
-                )
-            }    
+                    )
+                }    
             <fieldset>
                 <div className="form-group">
                     <label htmlFor="contactNotes">Notes:</label>

@@ -44,6 +44,13 @@ export const CustomFieldList = () => {
         setNewCustomField(copy)
     }
   
+    const confirmDelete = (customField) => {
+        let check = window.confirm("This will delete ALL content associated with this custom field! Proceed?")
+        if (check) {  
+        deleteCustomField(customField)
+            .then(loadUserCustomFields)
+        } 
+    }
 
     return <>
 
@@ -94,8 +101,9 @@ export const CustomFieldList = () => {
                                         }}
                                         >Edit</button>
                                     <button onClick={() => {
-                                        deleteCustomField(customField)
-                                        .then(loadUserCustomFields)
+                                        confirmDelete(customField)
+                                        // deleteCustomField(customField)
+                                        // .then(loadUserCustomFields)
                                         }}
                                     >Delete</button>
                                 </div>
