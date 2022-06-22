@@ -128,7 +128,7 @@ export const CustomFieldList = () => {
                         }
                     } />
             </div>
-            <div className="sortDropdown">
+            <div className="fieldTypeDropdown">
                 <label>
                     Field Type:
                     <select value={typeOption} onChange={(event) => {
@@ -147,15 +147,10 @@ export const CustomFieldList = () => {
                     .then(setTimeout(loadUserCustomFields), 100)
                 }}
             className="btn btn-primary">
-                Save Custom Field
+                Save New Custom Field
             </button>
         </fieldset>
 
         </>
 }
 
-// Must export access to custom fields via API manager
-// On create, must make all custom fields available as editable input
-// On edit, must be able to edit info in all custom fields for the user --- what if the user has deleted the field?? It won't delete all previous info with that field.
-// OR it will, so must provide a warning-- warning deleting this field will delete this field data for ALL contacts! 
-// On details, must list all custom fields and associated information
