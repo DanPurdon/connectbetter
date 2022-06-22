@@ -3,15 +3,19 @@
     flex-direction: column;
     flex-wrap: wrap;
     justify-content: space-evenly;
+    gap: 10px;
 }
 
 .customField {
-    background-color: azure;
-    border: 1px dotted darkmagenta;
+    background-color: #f4f4f9;
+    border: 1px solid #000501;
     padding: .7rem;
     margin: .5rem 0;
-    display: flex;
-    flex-direction: column;
+    min-width: 15rem;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    border-radius: 5px; 
+    font-size: 150%;
 }
 
 .fieldDescriptions {
@@ -22,4 +26,8 @@
 .fieldButtons {
     padding: .2rem;
     margin: .2rem 0;
+}
+
+.fieldTypeDropdown {
+    margin: .3rem 0
 }

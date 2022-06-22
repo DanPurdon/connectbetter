@@ -46,17 +46,16 @@ export const ContactList = ({searchTermState}) => {
         [searchTermState]
     )
 
+    const onClick = (contactId) => {
+        // debugger
+        navigate(`/contacts/${contactId}`)
+    }
 
     return <>
 
-        <h2>List of Contacts</h2>
-        <div id="createContactButton">
-        <button onClick={() => navigate("/contacts/create")}>Create New Contact</button>
-        </div>
-
         <div className="sortDropdown">
-        <label>
-            Sort by:
+        <label className="sortLabel">
+            Sort by: 
             <select value={sortOption} onChange={(event) => {
                 setSort(event.target.value)
                 }}>
@@ -70,19 +69,29 @@ export const ContactList = ({searchTermState}) => {
         </label>
         </div>
 
+        {/* <div id="createContactButton">
+        <button onClick={() => navigate("/contacts/create")}>Create New Contact</button>
+        </div> */}
+        
         <article className="contacts">
             {
                 filteredContacts?.map(
                     (contact) => {
-                        return <section className="contact" key={`contact--${contact.id}`}>
-                            <div><Link to={`/contacts/${contact.id}`}>{contact.firstName} {contact.lastName ? `${contact.lastName}` : ""}</Link></div>
+                        return <>
+                            
+                            <section className="contact" key={`contact--${contact.id}`} >
+                            <Link className="fill__section" to={`/contacts/${contact.id}`}>{contact.firstName} {contact.lastName ? `${contact.lastName}` : ""}
+                            {/* <div onclick={navigate(`/contacts/${contact.id}`)} style="cursor: pointer;">  onclick={navigate(`/contacts/${contact.id}`)} onClick={onClick(contact.id)} style={{ cursor: "pointer" }}*/ }
+                            <div>
                             <div>{contact.metAt ? `Met at: ${contact.metAt}` : ""}</div>
                             <div>{contact.email ? `Email: ${contact.email}` : ""}</div>
                             <div>{contact.phone ? `Phone: ${contact.phone}` : ""}</div>
                             <div>{sortOption === "birthday" ? `Birthday: ${contact.birthday}` : ""}</div>
                             <div>{sortOption === "city" ? `City: ${contact.city}` : ""}</div>
-                           
+                            </div>
+                            </Link>
                         </section>
+                        </>
                     }
                 )
             }    

@@ -80,7 +80,7 @@ export const CategoryList = () => {
                                 </section> 
                         } else {
                             return <section className="category" key={`category--${category.id}`}>
-                                <div>{category?.name}
+                                <div>{category?.name}<br></br>
                                     <button onClick={() => {
                                         setEditing({editing: true, categoryId: category.id, name: category.name})
                                         loadUserCategories()
