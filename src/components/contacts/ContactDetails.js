@@ -69,7 +69,7 @@ export const ContactDetails = () => {
                     
                     navigate(`/contacts/${contact.id}/edit`)
                 }}
-            className="btn btn-primary">
+            className="button-55">
                 Edit contact
             </button>
             <button 
@@ -78,7 +78,7 @@ export const ContactDetails = () => {
                     .then(window.alert("Contact Deleted"))
                     .then(navigate(`/contacts`))
                 }}
-            className="btn btn-primary">
+            className="button-55">
                 DELETE contact
             </button>
         </section>
