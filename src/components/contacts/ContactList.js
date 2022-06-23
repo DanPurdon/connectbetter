@@ -36,15 +36,51 @@ export const ContactList = ({searchTermState}) => {
         [sortOption]
     )
 
+    // useEffect(
+    //     () => {
+    //         const searchedContacts = contacts.filter(contact => {
+    //             return contact.firstName.toLowerCase().startsWith(searchTermState.toLowerCase())
+    //         })
+    //         setFilteredContacts(searchedContacts)
+    //     },
+    //     [searchTermState]
+    // )
+
     useEffect(
         () => {
-            const searchedContacts = contacts.filter(contact => {
-                return contact.firstName.toLowerCase().startsWith(searchTermState.toLowerCase())
-            })
-            setFilteredContacts(searchedContacts)
+            let filtered = []
+            const input = searchTermState.toLowerCase()
+            if (input) {
+                filtered = contacts.filter((el) => {
+                    return Object.values(el).some((val) =>
+                        String(val).toLowerCase().includes(input)
+                    )
+                    })
+            
+                    // log.textContent = JSON.stringify(filtered);
+                    setFilteredContacts(filtered)
+            }
+            
         },
         [searchTermState]
-    )
+        )
+        
+    // const log = document.getElementById('log');
+        
+    // function searchArray(e) {
+    // const input = e.target.value.toLowerCase();
+    // if (input) {
+    //     filtered = data.filter((el) => {
+    //     return Object.values(el).some((val) =>
+    //         String(val).toLowerCase().includes(input)
+    //     );
+    //     });
+
+    //     log.textContent = JSON.stringify(filtered);
+    // }
+    // }
+
+
 
     const onClick = (contactId) => {
         // debugger
