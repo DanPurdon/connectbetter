@@ -78,7 +78,7 @@ export const CustomFieldList = () => {
                                                 setEditing(copy)
                                             }
                                         } />
-                                    <button onClick={() => {
+                                    <button className="button-55" onClick={() => {
                                         editCustomField({
                                             userId: customField.userId,
                                             name: editing.name,
@@ -86,7 +86,7 @@ export const CustomFieldList = () => {
                                             id: customField.id
                                         })
                                         .then(setEditing({editing: false, customFieldId: null, name: "", type: ""}))
-                                        .then(setTimeout(loadUserCustomFields), 100)
+                                        .then(setTimeout(loadUserCustomFields), 500)
                                         }}
                                         >Save</button>
                                 </div>
