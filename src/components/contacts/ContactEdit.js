@@ -245,9 +245,6 @@ export const ContactEdit = () => {
                         } />
                 </div>
             </fieldset>
-            {/* Needs to have current customfields for this contact, populate fields with them IF they exist. A check on every field then for a match.
-            If no match, show blank field like contact add. If it exists, let the value be that thing. In API, will need to have a check if it preexisted. 
-            Do a post OR a put, depending*/}
            
            {
                 userFields?.map(
