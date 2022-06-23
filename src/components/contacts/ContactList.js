@@ -3,14 +3,17 @@ import { Link, useNavigate } from "react-router-dom"
 import { getUserContacts } from "../APIManager"
 import "./Contacts.css"
 
-export const ContactList = ({searchTermState}) => {
+export const ContactList = ({searchTermState, chosenFilterCategoryState}) => {
     const [contacts, setContacts] = useState([])
     const [filteredContacts, setFilteredContacts] = useState([])
-    const navigate = useNavigate()
+    const [filteredByCategoryContacts, setFilteredByCategoryContacts] = useState([])
+    const [sortedContacts, setSortedContacts] = useState([])
+    const [displayContacts, setDisplayContacts] = useState([])
     const [sortOption, setSort] = useState({
         sort: ""
     })
-
+    
+    const navigate = useNavigate()
     const localConnectUser = localStorage.getItem("connect_user")
     const connectUserObject = JSON.parse(localConnectUser)
     
@@ -20,6 +23,9 @@ export const ContactList = ({searchTermState}) => {
                 .then((contactArray) => {
                     setContacts(contactArray)
                     setFilteredContacts(contactArray)
+                    setSortedContacts(contactArray)
+                    setFilteredByCategoryContacts(contactArray)
+                    setDisplayContacts(contactArray)
                 }) 
         },
         [] 
@@ -30,62 +36,64 @@ export const ContactList = ({searchTermState}) => {
             const contactsCopy = contacts.map(contact => ({...contact}))
             const parameter = sortOption
             const filteredForMatches = contactsCopy.filter(contact => contact[parameter] !== "")
-            const sortedContacts = filteredForMatches.sort((a,b) => (a[parameter] > b[parameter]) ? 1 : ((b[parameter] > a[parameter]) ? -1 : 0))
-            setFilteredContacts(sortedContacts)
+            const sorted = filteredForMatches.sort((a,b) => (a[parameter] > b[parameter]) ? 1 : ((b[parameter] > a[parameter]) ? -1 : 0))
+            setSortedContacts(sorted)
+            setDisplayContacts(sorted)
         },
         [sortOption]
     )
-
-    // useEffect(
-    //     () => {
-    //         const searchedContacts = contacts.filter(contact => {
-    //             return contact.firstName.toLowerCase().startsWith(searchTermState.toLowerCase())
-    //         })
-    //         setFilteredContacts(searchedContacts)
-    //     },
-    //     [searchTermState]
-    // )
 
     useEffect(
         () => {
             let filtered = []
             const input = searchTermState.toLowerCase()
             if (input) {
-                filtered = contacts.filter((el) => {
+                if (chosenFilterCategoryState.size > 0) {
+                    filtered = filteredByCategoryContacts.filter((el) => {
+                        return Object.values(el).some((val) =>
+                            String(val).toLowerCase().includes(input)
+                        )
+                        })
+                        setDisplayContacts(filtered)    
+                } else {
+                filtered = sortedContacts.filter((el) => {
                     return Object.values(el).some((val) =>
                         String(val).toLowerCase().includes(input)
                     )
                     })
-            
-                    // log.textContent = JSON.stringify(filtered);
-                    setFilteredContacts(filtered)
+                    setDisplayContacts(filtered)
+                }
+            } else if (chosenFilterCategoryState.size > 0) {
+                setDisplayContacts(filteredByCategoryContacts)
+            } else {
+                setDisplayContacts(sortedContacts)
             }
             
         },
         [searchTermState]
-        )
-        
-    // const log = document.getElementById('log');
-        
-    // function searchArray(e) {
-    // const input = e.target.value.toLowerCase();
-    // if (input) {
-    //     filtered = data.filter((el) => {
-    //     return Object.values(el).some((val) =>
-    //         String(val).toLowerCase().includes(input)
-    //     );
-    //     });
+    )
 
-    //     log.textContent = JSON.stringify(filtered);
-    // }
-    // }
-
-
-
-    const onClick = (contactId) => {
-        // debugger
-        navigate(`/contacts/${contactId}`)
-    }
+    useEffect(
+        () => {
+            
+            if (chosenFilterCategoryState.size > 0) {
+                let categorySet = new Set(chosenFilterCategoryState)
+                const matches = sortedContacts.filter(contact => {
+                    let categoryMatches = contact.contactCategories.find(contactCategory => {
+                        let categoryId = contactCategory.userCategoryId 
+                        return categorySet.has(categoryId)
+                    })
+                    return categoryMatches ? true : false                    
+                })
+                setFilteredByCategoryContacts(matches)
+                setDisplayContacts(matches)
+            } else {
+                setDisplayContacts(sortedContacts)
+            }
+            
+        },
+        [chosenFilterCategoryState]
+    )
 
     return <>
 
@@ -105,19 +113,14 @@ export const ContactList = ({searchTermState}) => {
         </label>
         </div>
 
-        {/* <div id="createContactButton">
-        <button onClick={() => navigate("/contacts/create")}>Create New Contact</button>
-        </div> */}
-        
         <article className="contacts">
             {
-                filteredContacts?.map(
+                displayContacts?.map(
                     (contact) => {
                         return <>
                             
                             <section className="contact" key={`contact--${contact.id}`} >
                             <Link className="fill__section" to={`/contacts/${contact.id}`}>{contact.firstName} {contact.lastName ? `${contact.lastName}` : ""}
-                            {/* <div onclick={navigate(`/contacts/${contact.id}`)} style="cursor: pointer;">  onclick={navigate(`/contacts/${contact.id}`)} onClick={onClick(contact.id)} style={{ cursor: "pointer" }}*/ }
                             <div>
                             <div>{contact.metAt ? `Met at: ${contact.metAt}` : ""}</div>
                             <div>{contact.email ? `Email: ${contact.email}` : ""}</div>
