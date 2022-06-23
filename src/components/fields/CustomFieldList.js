@@ -95,12 +95,12 @@ export const CustomFieldList = () => {
                             return <section className="customField" key={`customField--${customField.id}`}>
                                 <div className="fieldDescriptions">Field Name: {customField?.name} <br></br>  Type: {customField.type}</div>
                                 <div className="fieldButtons">
-                                    <button onClick={() => {
+                                    <button className="button-55" onClick={() => {
                                         setEditing({editing: true, customFieldId: customField.id, name: customField.name, type: customField.type})
                                         loadUserCustomFields()
                                         }}
                                         >Edit</button>
-                                    <button onClick={() => {
+                                    <button className="button-55" onClick={() => {
                                         confirmDelete(customField)
                                         // deleteCustomField(customField)
                                         // .then(loadUserCustomFields)
@@ -146,7 +146,7 @@ export const CustomFieldList = () => {
                     addCustomField(newCustomField)
                     .then(setTimeout(loadUserCustomFields), 100)
                 }}
-            className="btn btn-primary">
+                className="button-55">
                 Save New Custom Field
             </button>
         </fieldset>

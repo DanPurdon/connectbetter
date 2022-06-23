@@ -292,7 +292,7 @@ export const ContactForm = () => {
                 onClick={(clickEvent) => {
                     handleSaveButtonClick(clickEvent)
                 }}
-                className="btn btn-primary">
+                className="button-55">
                 Save Contact
             </button>
         </form>

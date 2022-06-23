@@ -81,12 +81,12 @@ export const CategoryList = () => {
                         } else {
                             return <section className="category" key={`category--${category.id}`}>
                                 <div>{category?.name}<br></br>
-                                    <button onClick={() => {
+                                    <button className="button-55" onClick={() => {
                                         setEditing({editing: true, categoryId: category.id, name: category.name})
                                         loadUserCategories()
                                         }}
                                         >Edit</button>
-                                    <button onClick={() => {
+                                    <button className="button-55" onClick={() => {
                                         deleteCategory(category)
                                         .then(loadUserCategories)
                                         }}
@@ -119,7 +119,7 @@ export const CategoryList = () => {
                     .then(categorySetter("name", ""))
                     .then(loadUserCategories)
                 }}
-            className="btn btn-primary">
+                className="button-55">
                 Save Category
             </button>
         </fieldset>
