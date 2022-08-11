@@ -22,7 +22,7 @@ export const CategoryList = () => {
     const loadUserCategories = () => {
         getUserCategories(connectUserObject.id)
                 .then((categoryArray) => {
-                    setCategories(categoryArray)
+                    setTimeout(setCategories(categoryArray), 1000)
                 }) 
     }
 
