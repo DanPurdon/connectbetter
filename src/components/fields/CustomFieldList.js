@@ -144,7 +144,7 @@ export const CustomFieldList = () => {
         <button 
                 onClick={() => {
                     addCustomField(newCustomField)
-                    .then(setTimeout(loadUserCustomFields), 100)
+                    .then(setTimeout(loadUserCustomFields), 200)
                 }}
                 className="button-55">
                 Save New Custom Field
