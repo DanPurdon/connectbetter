@@ -89,7 +89,7 @@ export const ContactEdit = () => {
 
     const handleCheckboxes = (category) => {
         if (chosenCategories.has(category.id)) {
-           return true
+            return true
         } else {
             return false
         } 
