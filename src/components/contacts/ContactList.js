@@ -92,8 +92,8 @@ export const ContactList = ({searchTermState, chosenFilterCategoryState}) => {
             if (chosenFilterCategoryState.size > 0) {
                 let categorySet = new Set(chosenFilterCategoryState)
                 const matches = sortedContacts.filter(contact => {
-                    let categoryMatches = contact.contactCategories.find(contactCategory => {
-                        let categoryId = contactCategory.userCategoryId 
+                    let categoryMatches = contact.categories.find(contactCategory => {
+                        let categoryId = contactCategory.id 
                         return categorySet.has(categoryId)
                     })
                     return categoryMatches ? true : false                    
