@@ -19,8 +19,8 @@ export const Login = () => {
         loginUser(user)
             .then(res => {
                 if ("valid" in res && res.valid && "token" in res) {
-                    localStorage.setItem("palantiri_token", res.token)
-                    navigate("/")
+                    localStorage.setItem("connect_token", res.token)
+                    navigate("/contacts")
                 }
                 else {
                     invalidDialog.current.showModal()

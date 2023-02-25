@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { getUserContacts } from "../APIManager"
+import { getUserContacts } from "../managers/ContactManager"
 import "./Contacts.css"
 
 export const ContactList = ({searchTermState, chosenFilterCategoryState}) => {
@@ -14,12 +14,25 @@ export const ContactList = ({searchTermState, chosenFilterCategoryState}) => {
     })
     
     const navigate = useNavigate()
-    const localConnectUser = localStorage.getItem("connect_user")
-    const connectUserObject = JSON.parse(localConnectUser)
+    const localConnectUser = localStorage.getItem("connect_token")
+    // const connectUserObject = JSON.parse(localConnectUser)
     
+    // useEffect(
+    //     () => {
+    //         getUserContacts(connectUserObject.id)
+    //             .then((contactArray) => {
+    //                 setContacts(contactArray)
+    //                 setFilteredContacts(contactArray)
+    //                 setSortedContacts(contactArray)
+    //                 setFilteredByCategoryContacts(contactArray)
+    //                 setDisplayContacts(contactArray)
+    //             }) 
+    //     },
+    //     [] 
+    // )
     useEffect(
         () => {
-            getUserContacts(connectUserObject.id)
+            getUserContacts(localConnectUser)
                 .then((contactArray) => {
                     setContacts(contactArray)
                     setFilteredContacts(contactArray)
@@ -120,7 +133,7 @@ export const ContactList = ({searchTermState, chosenFilterCategoryState}) => {
                         return <>
                             
                             <section className="contact" key={`contact--${contact.id}`} >
-                            <Link className="fill__section" to={`/contacts/${contact.id}`}>{contact.firstName} {contact.lastName ? `${contact.lastName}` : ""}
+                            <Link className="fill__section" to={`/contacts/${contact.id}`}>{contact.first_name} {contact.last_name ? `${contact.last_name}` : ""}
                             <div>
                             <div>{contact.metAt ? `Met at: ${contact.metAt}` : ""}</div>
                             <div>{contact.email ? `Email: ${contact.email}` : ""}</div>

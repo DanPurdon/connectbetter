@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { getUserCategories } from "../APIManager"
+import { getUserCategories } from "../managers/CategoryManager"
 import { ContactList } from "./ContactList"
 import { ContactSearch } from "./ContactSearch"
 
@@ -8,12 +8,12 @@ export const ContactContainer = () => {
     const [categories, setCategories] = useState([])
     const [chosenCategories, setChosenCategories] = useState([])
 
-    const localConnectUser = localStorage.getItem("connect_user")
-    const connectUserObject = JSON.parse(localConnectUser)
+    const localConnectUser = localStorage.getItem("connect_token")
+    // const connectUserObject = JSON.parse(localConnectUser)
 
     useEffect(
         () => {
-            getUserCategories(connectUserObject.id)
+            getUserCategories(localConnectUser)
                 .then((data) => {
                     setCategories(data)
                 }) 
