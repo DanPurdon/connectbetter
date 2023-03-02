@@ -2,18 +2,13 @@ import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { getContactDetails, deleteContact } from "../managers/ContactManager"
 import { useNavigate } from "react-router-dom"
-import { getUserCategories } from "../managers/CategoryManager"
-
-
 
 export const ContactDetails = () => {
     const {contactId} = useParams()
     const [contact, updateContact] = useState()
     const [allCategories, updateCategories] = useState()
-    // const [customFields, updateCustomFields] = useState()
 
     const localConnectUser = localStorage.getItem("connect_token")
-    // const connectUserObject = JSON.parse(localConnectUser)
 
     useEffect(
         () => {
@@ -24,17 +19,6 @@ export const ContactDetails = () => {
         },
         [contactId]
     )
-
-    useEffect(
-        () => {
-            getUserCategories(localConnectUser)
-                .then((data) => {
-                    updateCategories(data)
-                }) 
-        },
-        []
-    )
-
 
     const navigate = useNavigate()
 
@@ -51,8 +35,8 @@ export const ContactDetails = () => {
                 return <div>{field?.user_custom_field?.name}: {field.content}</div>
             })}
             <div className="categoriesOutputContainer">
-            {contact?.contactCategories?.map(contactCategory => {
-                return <div className="categoryOutput">{allCategories?.find(category => category?.id === contactCategory?.userCategoryId).name}</div>
+            {contact?.categories?.map(contactCategory => {
+                return <div className="categoryOutput">{contactCategory.name}</div>
             })}
             </div>
 

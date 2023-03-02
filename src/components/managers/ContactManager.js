@@ -22,3 +22,15 @@ export const deleteContact = (contactId) => {
         headers: {"Authorization": `Token ${localStorage.getItem("connect_token")}`}
     })
 }
+
+export const createContact = (contactObject) => {
+    return fetch("http://localhost:8000/contacts", { 
+        method: "POST",
+        headers:{
+            "Authorization": `Token ${localStorage.getItem("connect_token")}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(contactObject)
+    })
+        .then(response => response.json())
+}
