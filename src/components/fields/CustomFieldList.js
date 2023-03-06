@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { addCustomField, deleteCustomField, editCustomField, getUserCustomFields } from "../APIManager"
+import { getUserCustomFields, addCustomField, deleteCustomField, editCustomField } from "../managers/CustomFieldManager"
 import "./CustomFields.css"
 
 export const CustomFieldList = () => {
-    const localConnectUser = localStorage.getItem("connect_user")
-    const connectUserObject = JSON.parse(localConnectUser)
+    // const localConnectUser = localStorage.getItem("connect_user")
+    // const connectUserObject = JSON.parse(localConnectUser)
     const [customFields, setCustomFields] = useState([])
     const [newCustomField, setNewCustomField] = useState({
-        userId: connectUserObject.id,
+        // userId: connectUserObject.id,
         name: "",
-        type:"Text"
+        type: "1"
     })
     const [editing, setEditing] = useState({
         editing: false,
@@ -18,14 +18,14 @@ export const CustomFieldList = () => {
         name: "",
         type: ""
     })
-    const [typeOption, setType] = useState({
-        type: ""
-    })
+    const [typeOption, setType] = useState(
+        "1"
+    )
 
     const navigate = useNavigate()
 
     const loadUserCustomFields = () => {
-        getUserCustomFields(connectUserObject.id)
+        getUserCustomFields()
                 .then((customFieldArray) => {
                     setCustomFields(customFieldArray)
                 }) 
@@ -60,9 +60,9 @@ export const CustomFieldList = () => {
 
         <article className="customFields">
             {
-                customFields.map(
+                customFields?.map(
                     (customField) => {
-                        if (editing.customFieldId === customField.id) {
+                        if (editing .customFieldId === customField.id) {
                             return <section className="customField" key={`customField--${customField.id}`}>
                                 <div className="form-group">
                                     <input
@@ -82,7 +82,7 @@ export const CustomFieldList = () => {
                                         editCustomField({
                                             userId: customField.userId,
                                             name: editing.name,
-                                            type: customField.type,
+                                            type: customField.type.id,
                                             id: customField.id
                                         })
                                         .then(setEditing({editing: false, customFieldId: null, name: "", type: ""}))
@@ -93,15 +93,15 @@ export const CustomFieldList = () => {
                                 </section> 
                         } else {
                             return <section className="customField" key={`customField--${customField.id}`}>
-                                <div className="fieldDescriptions">Field Name: {customField?.name} <br></br>  Type: {customField.type}</div>
+                                <div className="fieldDescriptions">Field Name: {customField?.name} <br></br>  Type: {customField.type.type}</div>
                                 <div className="fieldButtons">
                                     <button className="button-55" onClick={() => {
-                                        setEditing({editing: true, customFieldId: customField.id, name: customField.name, type: customField.type})
+                                        setEditing({editing: true, customFieldId: customField.id, name: customField.name, type: customField.type.id})
                                         loadUserCustomFields()
                                         }}
                                         >Edit</button>
                                     <button className="button-55" onClick={() => {
-                                        confirmDelete(customField)
+                                        confirmDelete(customField.id)
                                         // deleteCustomField(customField)
                                         // .then(loadUserCustomFields)
                                         }}
@@ -135,8 +135,8 @@ export const CustomFieldList = () => {
                         setType(event.target.value)
                         customFieldSetter("type", event.target.value)
                         }}>
-                        <option value="Text">Text</option>
-                        <option value="Date">Date</option>
+                        <option value="1">Text</option>
+                        <option value="2">Date</option>
                         {/*Later feature? <option value="Boolean">Boolean (True/False)</option> */}
                     </select>
                 </label>
@@ -144,6 +144,7 @@ export const CustomFieldList = () => {
         <button 
                 onClick={() => {
                     addCustomField(newCustomField)
+                    setNewCustomField({name: "", type: "1"})
                     .then(setTimeout(loadUserCustomFields), 200)
                 }}
                 className="button-55">
