@@ -1,20 +1,25 @@
 import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { getContact, editContact, getUserCategories, getContactCategoriesByContact, getUserCustomFields, getONLYCustomFieldsByContact } from "../APIManager"
+import { getContactCategoriesByContact, getONLYCustomFieldsByContact } from "../APIManager"
+import { getUserCustomFields } from "../managers/CustomFieldManager"
+import { getUserCategories } from "../managers/CategoryManager" 
+import { getContactDetails, editContact } from "../managers/ContactManager"
+
+
 
 export const ContactEdit = () => {
     const { contactId } = useParams()
     const [contact, updateContact] = useState()
     const [categories, setCategories] = useState([])
-    const [chosenCategories, setChosenCategories] = useState([])
+    const [chosenCategories, setChosenCategories] = useState(new Set())
     const [userFields, setUserFields] = useState([])
     const [userFieldContents, setUserFieldContents] = useState([])
 
     const [feedback, setFeedback] = useState("")
 
     const navigate = useNavigate()
-    const localConnectUser = localStorage.getItem("connect_user")
-    const connectUserObject = JSON.parse(localConnectUser)
+    const localConnectUser = localStorage.getItem("connect_token")
+    // const connectUserObject = JSON.parse(localConnectUser)
     
     useEffect(() => {
         if (feedback !== "") {
@@ -25,46 +30,16 @@ export const ContactEdit = () => {
     
     useEffect(
         () => {
-            getContact(contactId)
+            getContactDetails(contactId)
                 .then((data) => {
                     updateContact(data)
                 })
         },
         [contactId]
     )
-
-    useEffect(
-        () => {
-            getUserCustomFields(connectUserObject.id)
-            .then(data => setUserFields(data.map(obj => ({...obj, content: ""}))))
-        },
-        [] 
-    )
-
-    useEffect(
-        () => {
-            getONLYCustomFieldsByContact(contactId)
-            .then(data => setUserFieldContents(data))
-        },
-        [] 
-    )
-
-    useEffect(
-        () => {
-            getContactCategoriesByContact(contactId)
-            .then(contactCategories => {
-                const copy = new Set(chosenCategories)
-                contactCategories.map(category => {
-                        copy.add(category.userCategoryId)
-                    })
-                    setChosenCategories(copy)
-            })
-        },
-        [] 
-    )
-
+   
     const loadUserCategories = () => {
-        getUserCategories(connectUserObject.id)
+        getUserCategories()
                 .then((categoryArray) => {
                     setCategories(categoryArray)
                 }) 
@@ -73,13 +48,49 @@ export const ContactEdit = () => {
     useEffect(
         () => {
             loadUserCategories()
+            let copy = chosenCategories
+            contact?.categories?.map(category => {
+                    copy.add(category.id)
+                })
+                setChosenCategories(copy)
+        },
+        [] 
+    )
+    
+    // useEffect(
+    //     () => {
+    //             let copy = chosenCategories
+    //             contact?.categories?.map(category => {
+    //                     copy.add(category.id)
+    //                 })
+    //                 setChosenCategories(copy)
+    //     },
+    //     [] 
+    // )
+    
+    useEffect(
+        () => {
+            getUserCustomFields()
+            .then(data => setUserFields(data.map(obj => ({...obj, content: ""}))))
         },
         [] 
     )
 
+    // useEffect(
+    //     () => {
+    //         getONLYCustomFieldsByContact(contactId)
+    //         .then(data => setUserFieldContents(data))
+    //     },
+    //     [] 
+    // )
+
+
     const handleSaveButtonClick = (event) => {
         event.preventDefault()
-
+        contact.chosenCategories = Array.from(chosenCategories)
+        contact.userFieldContents = userFieldContents
+        contact.firstName = contact.first_name
+        contact.lastName = contact.last_name
         editContact(contact, chosenCategories, userFieldContents)
             .then(() => {
                 setFeedback("Employee profile successfully saved")
@@ -108,12 +119,12 @@ export const ContactEdit = () => {
                         required autoFocus
                         type="text"
                         className="form-control"
-                        placeholder={contact?.firstName}
-                        value={contact?.firstName}
+                        placeholder={contact?.first_name}
+                        value={contact?.first_name}
                         onChange={
                             (evt) => {
                                 const copy = { ...contact }
-                                copy.firstName = evt.target.value
+                                copy.first_name = evt.target.value
                                 updateContact(copy)
                             }
                         } />
@@ -126,12 +137,12 @@ export const ContactEdit = () => {
                         required autoFocus
                         type="text"
                         className="form-control"
-                        placeholder={contact?.lastName}
-                        value={contact?.lastName}
+                        placeholder={contact?.last_name}
+                        value={contact?.last_name}
                         onChange={
                             (evt) => {
                                 const copy = { ...contact }
-                                copy.lastName = evt.target.value
+                                copy.last_name = evt.target.value
                                 updateContact(copy)
                             }
                         } />
@@ -255,7 +266,7 @@ export const ContactEdit = () => {
                             <div className="form-group">
                                 <label htmlFor={userField.name}>{userField.name}:</label>
                                 <input key={`userField--${userField.id}`} 
-                                type={userField.type.toLowerCase()} 
+                                type={userField.type} 
                                 required autoFocus
                                 className="form-control"
                                 placeholder={userField.name}

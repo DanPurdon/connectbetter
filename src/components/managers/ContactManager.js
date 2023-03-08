@@ -34,3 +34,14 @@ export const createContact = (contactObject) => {
     })
         .then(response => response.json())
 }
+
+export const editContact = (contactObject) => {
+    return fetch(`http://localhost:8000/contacts/${contactObject.id}`, {
+        method: "PUT",
+        headers: {
+            "Authorization": `Token ${localStorage.getItem("connect_token")}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(contactObject)
+    })
+}
