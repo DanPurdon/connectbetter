@@ -33,6 +33,12 @@ export const ContactEdit = () => {
             getContactDetails(contactId)
                 .then((data) => {
                     updateContact(data)
+                    let copy = chosenCategories
+                    data.categories.map(category => {
+                    copy.add(category.id)})
+                    setChosenCategories(copy)
+
+                    setUserFieldContents(data.field_content.map(obj => ({userCustomFieldId: obj.user_custom_field.id, content: obj.content})))
                 })
         },
         [contactId]
@@ -48,11 +54,7 @@ export const ContactEdit = () => {
     useEffect(
         () => {
             loadUserCategories()
-            let copy = chosenCategories
-            contact?.categories?.map(category => {
-                    copy.add(category.id)
-                })
-                setChosenCategories(copy)
+            
         },
         [] 
     )
@@ -91,7 +93,7 @@ export const ContactEdit = () => {
         contact.userFieldContents = userFieldContents
         contact.firstName = contact.first_name
         contact.lastName = contact.last_name
-        editContact(contact, chosenCategories, userFieldContents)
+        editContact(contact)
             .then(() => {
                 setFeedback("Employee profile successfully saved")
                 setTimeout(() => navigate(`/contacts/${contact.id}`), 100)
@@ -260,7 +262,7 @@ export const ContactEdit = () => {
            {
                 userFields?.map(
                     (userField) => {
-                        const preexistingMatch = userFieldContents.find(field => field?.userCustomFieldId === userField.id)
+                        const preexistingMatch = userFieldContents?.find(field => field?.userCustomFieldId === userField.id)
                         return <>
                         <fieldset>
                             <div className="form-group">
@@ -274,7 +276,7 @@ export const ContactEdit = () => {
                                 onChange={
                                     (evt) => {
                                         let copy = userFieldContents.map(field => ({...field}))
-                                        const match = copy.filter(field => userField.id===parseInt(field.userCustomFieldId))
+                                        const match = copy.filter(field => userField.id===parseInt(field?.userCustomFieldId))
                                         if (match.length > 0) {
                                             const index = copy.indexOf(match[0])
                                             copy[index].content = evt.target.value
@@ -282,8 +284,8 @@ export const ContactEdit = () => {
                                         } else {
                                             let newUserFieldContent = {
                                                 userCustomFieldId: parseInt(`${userField.id}`),
-                                                content: evt.target.value,
-                                                contactId: contactId
+                                                content: evt.target.value
+                                                // contactId: contactId
                                             }
                                             copy.push(newUserFieldContent)
                                             setUserFieldContents(copy)
