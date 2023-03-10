@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { getContactCategoriesByContact, getONLYCustomFieldsByContact } from "../APIManager"
 import { getUserCustomFields } from "../managers/CustomFieldManager"
 import { getUserCategories } from "../managers/CategoryManager" 
 import { getContactDetails, editContact } from "../managers/ContactManager"
@@ -19,7 +18,6 @@ export const ContactEdit = () => {
 
     const navigate = useNavigate()
     const localConnectUser = localStorage.getItem("connect_token")
-    // const connectUserObject = JSON.parse(localConnectUser)
     
     useEffect(() => {
         if (feedback !== "") {
@@ -59,16 +57,6 @@ export const ContactEdit = () => {
         [] 
     )
     
-    // useEffect(
-    //     () => {
-    //             let copy = chosenCategories
-    //             contact?.categories?.map(category => {
-    //                     copy.add(category.id)
-    //                 })
-    //                 setChosenCategories(copy)
-    //     },
-    //     [] 
-    // )
     
     useEffect(
         () => {
@@ -77,15 +65,6 @@ export const ContactEdit = () => {
         },
         [] 
     )
-
-    // useEffect(
-    //     () => {
-    //         getONLYCustomFieldsByContact(contactId)
-    //         .then(data => setUserFieldContents(data))
-    //     },
-    //     [] 
-    // )
-
 
     const handleSaveButtonClick = (event) => {
         event.preventDefault()
@@ -285,7 +264,6 @@ export const ContactEdit = () => {
                                             let newUserFieldContent = {
                                                 userCustomFieldId: parseInt(`${userField.id}`),
                                                 content: evt.target.value
-                                                // contactId: contactId
                                             }
                                             copy.push(newUserFieldContent)
                                             setUserFieldContents(copy)
