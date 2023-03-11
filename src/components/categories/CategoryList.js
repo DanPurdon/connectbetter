@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-// import { addCategory, deleteCategory, editCategory } from "../APIManager"
 import { addCategory, deleteCategory, editCategory, getUserCategories } from "../managers/CategoryManager" 
 import "./Categories.css"
 

@@ -15,21 +15,7 @@ export const ContactList = ({searchTermState, chosenFilterCategoryState}) => {
     
     const navigate = useNavigate()
     const localConnectUser = localStorage.getItem("connect_token")
-    // const connectUserObject = JSON.parse(localConnectUser)
     
-    // useEffect(
-    //     () => {
-    //         getUserContacts(connectUserObject.id)
-    //             .then((contactArray) => {
-    //                 setContacts(contactArray)
-    //                 setFilteredContacts(contactArray)
-    //                 setSortedContacts(contactArray)
-    //                 setFilteredByCategoryContacts(contactArray)
-    //                 setDisplayContacts(contactArray)
-    //             }) 
-    //     },
-    //     [] 
-    // )
     useEffect(
         () => {
             getUserContacts(localConnectUser)

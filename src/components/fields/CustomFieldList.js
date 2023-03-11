@@ -4,11 +4,8 @@ import { getUserCustomFields, addCustomField, deleteCustomField, editCustomField
 import "./CustomFields.css"
 
 export const CustomFieldList = () => {
-    // const localConnectUser = localStorage.getItem("connect_user")
-    // const connectUserObject = JSON.parse(localConnectUser)
     const [customFields, setCustomFields] = useState([])
     const [newCustomField, setNewCustomField] = useState({
-        // userId: connectUserObject.id,
         name: "",
         type: "1"
     })
@@ -102,8 +99,7 @@ export const CustomFieldList = () => {
                                         >Edit</button>
                                     <button className="button-55" onClick={() => {
                                         confirmDelete(customField.id)
-                                        // deleteCustomField(customField)
-                                        // .then(loadUserCustomFields)
+                                        
                                         }}
                                     >Delete</button>
                                 </div>
