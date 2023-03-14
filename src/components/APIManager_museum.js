@@ -1,3 +1,5 @@
+// OLD JSON SERVER API CALLS
+// ALL NOW ROUTED THROUGH /managers folder
 
 export const getAllContacts = () => {
     return fetch(`http://localhost:8088/contacts`)
