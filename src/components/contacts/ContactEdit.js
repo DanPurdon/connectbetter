@@ -1,20 +1,23 @@
 import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { getContact, editContact, getUserCategories, getContactCategoriesByContact, getUserCustomFields, getONLYCustomFieldsByContact } from "../APIManager"
+import { getUserCustomFields } from "../managers/CustomFieldManager"
+import { getUserCategories } from "../managers/CategoryManager" 
+import { getContactDetails, editContact } from "../managers/ContactManager"
+
+
 
 export const ContactEdit = () => {
     const { contactId } = useParams()
     const [contact, updateContact] = useState()
     const [categories, setCategories] = useState([])
-    const [chosenCategories, setChosenCategories] = useState([])
+    const [chosenCategories, setChosenCategories] = useState(new Set())
     const [userFields, setUserFields] = useState([])
     const [userFieldContents, setUserFieldContents] = useState([])
 
     const [feedback, setFeedback] = useState("")
 
     const navigate = useNavigate()
-    const localConnectUser = localStorage.getItem("connect_user")
-    const connectUserObject = JSON.parse(localConnectUser)
+    const localConnectUser = localStorage.getItem("connect_token")
     
     useEffect(() => {
         if (feedback !== "") {
@@ -25,46 +28,22 @@ export const ContactEdit = () => {
     
     useEffect(
         () => {
-            getContact(contactId)
+            getContactDetails(contactId)
                 .then((data) => {
                     updateContact(data)
+                    let copy = chosenCategories
+                    data.categories.map(category => {
+                    copy.add(category.id)})
+                    setChosenCategories(copy)
+
+                    setUserFieldContents(data.field_content.map(obj => ({userCustomFieldId: obj.user_custom_field.id, content: obj.content})))
                 })
         },
         [contactId]
     )
-
-    useEffect(
-        () => {
-            getUserCustomFields(connectUserObject.id)
-            .then(data => setUserFields(data.map(obj => ({...obj, content: ""}))))
-        },
-        [] 
-    )
-
-    useEffect(
-        () => {
-            getONLYCustomFieldsByContact(contactId)
-            .then(data => setUserFieldContents(data))
-        },
-        [] 
-    )
-
-    useEffect(
-        () => {
-            getContactCategoriesByContact(contactId)
-            .then(contactCategories => {
-                const copy = new Set(chosenCategories)
-                contactCategories.map(category => {
-                        copy.add(category.userCategoryId)
-                    })
-                    setChosenCategories(copy)
-            })
-        },
-        [] 
-    )
-
+   
     const loadUserCategories = () => {
-        getUserCategories(connectUserObject.id)
+        getUserCategories()
                 .then((categoryArray) => {
                     setCategories(categoryArray)
                 }) 
@@ -73,14 +52,27 @@ export const ContactEdit = () => {
     useEffect(
         () => {
             loadUserCategories()
+            
+        },
+        [] 
+    )
+    
+    
+    useEffect(
+        () => {
+            getUserCustomFields()
+            .then(data => setUserFields(data.map(obj => ({...obj, content: ""}))))
         },
         [] 
     )
 
     const handleSaveButtonClick = (event) => {
         event.preventDefault()
-
-        editContact(contact, chosenCategories, userFieldContents)
+        contact.chosenCategories = Array.from(chosenCategories)
+        contact.userFieldContents = userFieldContents
+        contact.firstName = contact.first_name
+        contact.lastName = contact.last_name
+        editContact(contact)
             .then(() => {
                 setFeedback("Employee profile successfully saved")
                 setTimeout(() => navigate(`/contacts/${contact.id}`), 100)
@@ -89,7 +81,7 @@ export const ContactEdit = () => {
 
     const handleCheckboxes = (category) => {
         if (chosenCategories.has(category.id)) {
-           return true
+            return true
         } else {
             return false
         } 
@@ -108,12 +100,12 @@ export const ContactEdit = () => {
                         required autoFocus
                         type="text"
                         className="form-control"
-                        placeholder={contact?.firstName}
-                        value={contact?.firstName}
+                        placeholder={contact?.first_name}
+                        value={contact?.first_name}
                         onChange={
                             (evt) => {
                                 const copy = { ...contact }
-                                copy.firstName = evt.target.value
+                                copy.first_name = evt.target.value
                                 updateContact(copy)
                             }
                         } />
@@ -126,12 +118,12 @@ export const ContactEdit = () => {
                         required autoFocus
                         type="text"
                         className="form-control"
-                        placeholder={contact?.lastName}
-                        value={contact?.lastName}
+                        placeholder={contact?.last_name}
+                        value={contact?.last_name}
                         onChange={
                             (evt) => {
                                 const copy = { ...contact }
-                                copy.lastName = evt.target.value
+                                copy.last_name = evt.target.value
                                 updateContact(copy)
                             }
                         } />
@@ -249,13 +241,13 @@ export const ContactEdit = () => {
            {
                 userFields?.map(
                     (userField) => {
-                        const preexistingMatch = userFieldContents.find(field => field?.userCustomFieldId === userField.id)
+                        const preexistingMatch = userFieldContents?.find(field => field?.userCustomFieldId === userField.id)
                         return <>
                         <fieldset>
                             <div className="form-group">
                                 <label htmlFor={userField.name}>{userField.name}:</label>
                                 <input key={`userField--${userField.id}`} 
-                                type={userField.type.toLowerCase()} 
+                                type={userField.type} 
                                 required autoFocus
                                 className="form-control"
                                 placeholder={userField.name}
@@ -263,7 +255,7 @@ export const ContactEdit = () => {
                                 onChange={
                                     (evt) => {
                                         let copy = userFieldContents.map(field => ({...field}))
-                                        const match = copy.filter(field => userField.id===parseInt(field.userCustomFieldId))
+                                        const match = copy.filter(field => userField.id===parseInt(field?.userCustomFieldId))
                                         if (match.length > 0) {
                                             const index = copy.indexOf(match[0])
                                             copy[index].content = evt.target.value
@@ -271,8 +263,7 @@ export const ContactEdit = () => {
                                         } else {
                                             let newUserFieldContent = {
                                                 userCustomFieldId: parseInt(`${userField.id}`),
-                                                content: evt.target.value,
-                                                contactId: contactId
+                                                content: evt.target.value
                                             }
                                             copy.push(newUserFieldContent)
                                             setUserFieldContents(copy)

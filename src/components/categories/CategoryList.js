@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { addCategory, deleteCategory, editCategory, getUserCategories } from "../APIManager"
+import { addCategory, deleteCategory, editCategory, getUserCategories } from "../managers/CategoryManager" 
 import "./Categories.css"
 
 export const CategoryList = () => {
-    const localConnectUser = localStorage.getItem("connect_user")
-    const connectUserObject = JSON.parse(localConnectUser)
+    const localConnectUser = localStorage.getItem("connect_token")
     const [categories, setCategories] = useState([])
     const [newCategory, setNewCategory] = useState({
-        userId: connectUserObject.id,
         name: ""
     })
     const [editing, setEditing] = useState({
@@ -20,7 +18,7 @@ export const CategoryList = () => {
     const navigate = useNavigate()
 
     const loadUserCategories = () => {
-        getUserCategories(connectUserObject.id)
+        getUserCategories(localConnectUser)
                 .then((categoryArray) => {
                     setTimeout(setCategories(categoryArray), 1000)
                 }) 
@@ -87,7 +85,7 @@ export const CategoryList = () => {
                                         }}
                                         >Edit</button>
                                     <button className="button-55" onClick={() => {
-                                        deleteCategory(category)
+                                        deleteCategory(category.id)
                                         .then(loadUserCategories)
                                         }}
                                     >Delete</button>

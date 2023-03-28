@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { getUserCategories, addContact, getUserCustomFields } from "../APIManager"
+import { createContact } from "../managers/ContactManager"
+import { getUserCategories } from "../managers/CategoryManager"
+import { getUserCustomFields } from "../managers/CustomFieldManager"
 
 
 export const ContactForm = () => {
-    const localConnectUser = localStorage.getItem("connect_user")
-    const connectUserObject = JSON.parse(localConnectUser)
+    const localConnectUser = localStorage.getItem("connect_token")
     const navigate = useNavigate()
     const [categories, setCategories] = useState([])
     const [userFields, setUserFields] = useState([])
     const [userFieldContents, setUserFieldContents] = useState([])
     const [chosenCategories, setChosenCategories] = useState([])
     const [contact, updateContact] = useState({
-        userId: connectUserObject.id,
         firstName: "",
         lastName: "",
         metAt: "",
@@ -20,14 +20,13 @@ export const ContactForm = () => {
         email: "",
         phone: "",
         socials: "",
-        birthday: "",
-        notes: "",
-        dateCreated: new Date().toLocaleString("en-CA").slice(0,10)
+        birthday: null,
+        notes: ""
     })
 
 
     const loadUserCategories = () => {
-        getUserCategories(connectUserObject.id)
+        getUserCategories(localConnectUser)
                 .then((categoryArray) => {
                     setCategories(categoryArray)
                 }) 
@@ -42,7 +41,7 @@ export const ContactForm = () => {
 
     useEffect(
         () => {
-            getUserCustomFields(connectUserObject.id)
+            getUserCustomFields()
             .then(data => setUserFields(data.map(obj => ({...obj, content: ""}))))
         },
         [] 
@@ -50,8 +49,9 @@ export const ContactForm = () => {
 
     const handleSaveButtonClick = (event) => {
         event.preventDefault()
-
-        addContact(contact, chosenCategories, userFieldContents)
+        contact.chosenCategories = Array.from(chosenCategories)
+        contact.userFieldContents = userFieldContents
+        createContact(contact)
         .then(() => navigate(`/contacts`))
     }
 
@@ -210,7 +210,7 @@ export const ContactForm = () => {
                             <div className="form-group">
                                 <label htmlFor={userField.name}>{userField.name}:</label>
                                 <input key={`userField--${userField.id}`} 
-                                type={userField.type.toLowerCase()} 
+                                type={userField.type.type.toLowerCase()} 
                                 required autoFocus
                                 className="form-control"
                                 placeholder={userField.name}
@@ -218,14 +218,14 @@ export const ContactForm = () => {
                                 onChange={
                                     (evt) => {
                                         let copy = userFieldContents.map(field => ({...field}))
-                                        const match = copy.filter(field => userField.id===parseInt(field.userCustomFieldId))
+                                        const match = copy.filter(field => userField.id===field.userCustomFieldId)
                                         if (match.length > 0) {
                                             const index = copy.indexOf(match[0])
                                             copy[index].content = evt.target.value
                                             setUserFieldContents(copy)
                                         } else {
                                             let newUserFieldContent = {
-                                                userCustomFieldId: parseInt(`${userField.id}`),
+                                                userCustomFieldId: userField.id,
                                                 content: evt.target.value
                                             }
                                             copy.push(newUserFieldContent)

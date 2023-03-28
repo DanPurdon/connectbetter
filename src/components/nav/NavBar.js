@@ -42,7 +42,7 @@ export const NavBar = () => {
             </li>
             <li className="navbar__item navbar__logout">
                 <Link className="navbar__link" to="/" onClick={() => {
-                    localStorage.removeItem("connect_user")
+                    localStorage.removeItem("connect_token")
                     navigate("/", {replace: true})
                 }}>Logout
                 <svg viewBox="0 0 70 36">
