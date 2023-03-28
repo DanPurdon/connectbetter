@@ -21,7 +21,6 @@ export const ContactEdit = () => {
     
     useEffect(() => {
         if (feedback !== "") {
-            // Clear feedback to make entire element disappear after 3 seconds
             setTimeout(() => setFeedback(""), 3000);
         }
     }, [feedback])

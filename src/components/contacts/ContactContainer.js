@@ -9,7 +9,6 @@ export const ContactContainer = () => {
     const [chosenCategories, setChosenCategories] = useState([])
 
     const localConnectUser = localStorage.getItem("connect_token")
-    // const connectUserObject = JSON.parse(localConnectUser)
 
     useEffect(
         () => {

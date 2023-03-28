@@ -214,7 +214,6 @@ export const ContactForm = () => {
                                 required autoFocus
                                 className="form-control"
                                 placeholder={userField.name}
-                                // value={userField.content}
                                 onChange={
                                     (evt) => {
                                         let copy = userFieldContents.map(field => ({...field}))
