@@ -12,8 +12,6 @@ export const ApplicationViews = () => {
         <Routes>
             <Route path="/" element={
                 <>
-                    {/* <h1>ConnectBetter</h1>
-                    <h2>Your Memory Extender</h2> */}
                     <Outlet />
                 </>
             }>
