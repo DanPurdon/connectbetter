@@ -1,5 +1,5 @@
 export const getUserContacts = () => {
-    return fetch("http://localhost:8000/contacts", {
+    return fetch("https://connect-better.herokuapp.com/contacts", {
         headers:{
             "Authorization": `Token ${localStorage.getItem("connect_token")}`
         }
@@ -8,7 +8,7 @@ export const getUserContacts = () => {
 }
 
 export const getContactDetails = (contactId) => {
-    return fetch(`http://localhost:8000/contacts/${contactId}`, {
+    return fetch(`https://connect-better.herokuapp.com/contacts/${contactId}`, {
         headers:{
             "Authorization": `Token ${localStorage.getItem("connect_token")}`
         }
@@ -17,14 +17,14 @@ export const getContactDetails = (contactId) => {
 }
 
 export const deleteContact = (contactId) => {
-    return fetch(`http://localhost:8000/contacts/${contactId}`, {
+    return fetch(`https://connect-better.herokuapp.com/contacts/${contactId}`, {
         method: "DELETE",
         headers: {"Authorization": `Token ${localStorage.getItem("connect_token")}`}
     })
 }
 
 export const createContact = (contactObject) => {
-    return fetch("http://localhost:8000/contacts", { 
+    return fetch("https://connect-better.herokuapp.com/contacts", { 
         method: "POST",
         headers:{
             "Authorization": `Token ${localStorage.getItem("connect_token")}`,
@@ -36,7 +36,7 @@ export const createContact = (contactObject) => {
 }
 
 export const editContact = (contactObject) => {
-    return fetch(`http://localhost:8000/contacts/${contactObject.id}`, {
+    return fetch(`https://connect-better.herokuapp.com/contacts/${contactObject.id}`, {
         method: "PUT",
         headers: {
             "Authorization": `Token ${localStorage.getItem("connect_token")}`,

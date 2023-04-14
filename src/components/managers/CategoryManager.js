@@ -1,5 +1,5 @@
 export const getUserCategories = () => {
-    return fetch("http://localhost:8000/categories", {
+    return fetch("https://connect-better.herokuapp.com/categories", {
         headers:{
             "Authorization": `Token ${localStorage.getItem("connect_token")}`
         }
@@ -8,14 +8,14 @@ export const getUserCategories = () => {
 }
 
 export const deleteCategory = (categoryId) => {
-    return fetch(`http://localhost:8000/categories/${categoryId}`, {
+    return fetch(`https://connect-better.herokuapp.com/categories/${categoryId}`, {
         method: "DELETE",
         headers: {"Authorization": `Token ${localStorage.getItem("connect_token")}`}
     })
 }
 
 export const addCategory = (categoryObject) => {
-    return fetch("http://localhost:8000/categories", { 
+    return fetch("https://connect-better.herokuapp.com/categories", { 
         method: "POST",
         headers:{
             "Authorization": `Token ${localStorage.getItem("connect_token")}`,
@@ -27,7 +27,7 @@ export const addCategory = (categoryObject) => {
 }
 
 export const editCategory = (categoryObject) => {
-    return fetch(`http://localhost:8000/categories/${categoryObject.id}`, {
+    return fetch(`https://connect-better.herokuapp.com/categories/${categoryObject.id}`, {
         method: "PUT",
         headers: {
             "Authorization": `Token ${localStorage.getItem("connect_token")}`,

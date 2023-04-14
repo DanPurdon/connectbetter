@@ -1,5 +1,5 @@
 export const getUserCustomFields = () => {
-    return fetch("http://localhost:8000/fields", {
+    return fetch("https://connect-better.herokuapp.com/fields", {
         headers:{
             "Authorization": `Token ${localStorage.getItem("connect_token")}`
         }
@@ -8,14 +8,14 @@ export const getUserCustomFields = () => {
 }
 
 export const deleteCustomField = (customFieldId) => {
-    return fetch(`http://localhost:8000/fields/${customFieldId}`, {
+    return fetch(`https://connect-better.herokuapp.com/fields/${customFieldId}`, {
         method: "DELETE",
         headers: {"Authorization": `Token ${localStorage.getItem("connect_token")}`}
     })
 }
 
 export const addCustomField = (customFieldObject) => {
-    return fetch("http://localhost:8000/fields", { 
+    return fetch("https://connect-better.herokuapp.com/fields", { 
         method: "POST",
         headers:{
             "Authorization": `Token ${localStorage.getItem("connect_token")}`,
@@ -27,7 +27,7 @@ export const addCustomField = (customFieldObject) => {
 }
 
 export const editCustomField = (customFieldObject) => {
-    return fetch(`http://localhost:8000/fields/${customFieldObject.id}`, {
+    return fetch(`https://connect-better.herokuapp.com/fields/${customFieldObject.id}`, {
         method: "PUT",
         headers: {
             "Authorization": `Token ${localStorage.getItem("connect_token")}`,
